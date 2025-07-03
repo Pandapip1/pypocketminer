@@ -1,0 +1,10 @@
+# PyPocketMiner
+
+PyPocketMiner is a fork of PocketMiner .cite {Ward2023Mickdub}, refactored for use as a python library. PocketMiner is a tool for predicting the locations of cryptic pockets from single protein structures, described in .cite {Meller2023Predicting}. PocketMiner itself is built using the architecture first published in .cite {einsJing2020Learningtein}.
+
+## Usage
+
+
+## Works Cited
+
+.bibliography {CITATIONS.bib} title:{} style:plain
