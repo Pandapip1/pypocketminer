@@ -7,18 +7,20 @@ import mdtraj as md
 from glob import glob
 import numpy as np
 
+
 def make_predictions(strucs, model, nn_path):
-    '''
+    """
     strucs : list of single frame MDTraj trajectories
     model : MQAModel corresponding to network in nn_path
     nn_path : path to checkpoint files
-    '''
+    """
     X, S, mask = process_strucs(strucs)
     predictions = predict_on_xtals(model, nn_path, X, S, mask)
     return predictions
 
+
 # main method
-if __name__ == '__main__':
+if __name__ == "__main__":
     model_path = sys.argv[1]
     pdb_file_path = sys.argv[2]
     output_path = sys.argv[3]
@@ -32,14 +34,19 @@ if __name__ == '__main__':
     HIDDEN_DIM = 100
 
     # MQA Model used for selected NN network
-    model = MQAModel(node_features=(8, 50), edge_features=(1, 32),
-                     hidden_dim=(16, HIDDEN_DIM),
-                     num_layers=NUM_LAYERS, dropout=DROPOUT_RATE)
+    model = MQAModel(
+        node_features=(8, 50),
+        edge_features=(1, 32),
+        hidden_dim=(16, HIDDEN_DIM),
+        num_layers=NUM_LAYERS,
+        dropout=DROPOUT_RATE,
+    )
 
     predictions = make_predictions(strucs, model, model_path)
 
-    np.savetxt(os.path.join(output_path,'predictions.txt'), predictions, fmt='%.4g', delimiter='\n')
-
-
-
-
+    np.savetxt(
+        os.path.join(output_path, "predictions.txt"),
+        predictions,
+        fmt="%.4g",
+        delimiter="\n",
+    )

@@ -1,30 +1,34 @@
 def norm_no_nan(x, axis=-1, keepdims=False, eps=1e-8, sqrt=True):
     out = tf.maximum(tf.math.reduce_sum(tf.math.square(x), axis, keepdims), eps)
-    return (tf.sqrt(out) if sqrt else out)
+    return tf.sqrt(out) if sqrt else out
+
 
 # [..., 3*nv + ns] -> [..., 3, nv], [..., ns]
 # nv = number of vector channels
 # ns = number of scalar channels
 # vector channels are ALWAYS at the top!
 def split(x, nv):
-    v = tf.reshape(x[..., :3*nv], x.shape[:-1] + [3, nv])
-    s = x[..., 3*nv:]
+    v = tf.reshape(x[..., : 3 * nv], x.shape[:-1] + [3, nv])
+    s = x[..., 3 * nv :]
     return v, s
+
 
 # [..., 3, nv], [..., ns] -> [..., 3*nv + ns]
 def merge(v, s):
-    v = tf.reshape(v, v.shape[:-2] + [3*v.shape[-1]])
+    v = tf.reshape(v, v.shape[:-2] + [3 * v.shape[-1]])
     return tf.concat([v, s], -1)
+
 
 # Concat in a way that keeps vector channels at the top
 def vs_concat(x1, x2, nv1, nv2):
-    
+
     v1, s1 = split(x1, nv1)
     v2, s2 = split(x2, nv2)
-    
+
     v = tf.concat([v1, v2], -1)
     s = tf.concat([s1, s2], -1)
     return merge(v, s)
+
 
 def autoregressive_mask(E_idx):
     N_nodes = tf.shape(E_idx)[1]

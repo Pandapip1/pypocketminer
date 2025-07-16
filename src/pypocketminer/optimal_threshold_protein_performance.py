@@ -7,8 +7,13 @@ import os
 from glob import glob
 from tensorflow import keras as keras
 from tqdm import tqdm
-from validate_performance_on_xtals import process_strucs, process_paths, predict_on_xtals
+from validate_performance_on_xtals import (
+    process_strucs,
+    process_paths,
+    predict_on_xtals,
+)
 from itertools import accumulate
+
 
 def determine_optimal_threshold(y_pred, y_true):
     from sklearn import metrics
@@ -39,16 +44,18 @@ def determine_recall_or_sensitivity(parsed_y_pred, parsed_y_true, threshold):
     return protein_performance
 
 
-if __name__ == '__main__':
-    label_dictionary = np.load('/project/bowmore/ameller/projects/pocket_prediction/data/val_label_dictionary.npy',
-                               allow_pickle=True).item()
+if __name__ == "__main__":
+    label_dictionary = np.load(
+        "/project/bowmore/ameller/projects/pocket_prediction/data/val_label_dictionary.npy",
+        allow_pickle=True,
+    ).item()
 
     # get NN directories
-    nn_dirs = glob('/project/bowmanlab/ameller/gvp/task2/*/*')
+    nn_dirs = glob("/project/bowmanlab/ameller/gvp/task2/*/*")
 
     for nn_dir in nn_dirs:
         # if sidechain is in name, need to use tensors
-        if 'sidechain' in nn_dir:
+        if "sidechain" in nn_dir:
             continue
 
         # determine number of compeleted epochs
@@ -70,17 +77,33 @@ if __name__ == '__main__':
         y_true = np.load(os.path.join(nn_dir, f"val_new_y_true_{best_epoch}.npy"))
 
         optimal_threshold = determine_optimal_threshold(y_pred, y_true)
-        np.save(os.path.join(nn_dir, 'val_new_optimal_threshold.npy'), optimal_threshold)
+        np.save(
+            os.path.join(nn_dir, "val_new_optimal_threshold.npy"), optimal_threshold
+        )
 
         print(optimal_threshold)
 
         lengths = [sum(l != 2) for l in label_dictionary.values()]
-        parsed_y_pred = [y_pred[end - length:end] for length, end in zip(lengths, accumulate(lengths))]
-        parsed_y_true = [y_true[end - length:end] for length, end in zip(lengths, accumulate(lengths))]
+        parsed_y_pred = [
+            y_pred[end - length : end]
+            for length, end in zip(lengths, accumulate(lengths))
+        ]
+        parsed_y_true = [
+            y_true[end - length : end]
+            for length, end in zip(lengths, accumulate(lengths))
+        ]
 
-        protein_performance = determine_recall_or_sensitivity(parsed_y_pred, parsed_y_true, optimal_threshold)
+        protein_performance = determine_recall_or_sensitivity(
+            parsed_y_pred, parsed_y_true, optimal_threshold
+        )
 
-        np.save(os.path.join(nn_dir, 'val_new_protein_performance.npy'), protein_performance)
+        np.save(
+            os.path.join(nn_dir, "val_new_protein_performance.npy"), protein_performance
+        )
 
-        print([(p, round(v, 3)) for p, v in zip(label_dictionary.keys(), protein_performance)])
-
+        print(
+            [
+                (p, round(v, 3))
+                for p, v in zip(label_dictionary.keys(), protein_performance)
+            ]
+        )

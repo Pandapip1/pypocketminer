@@ -11,17 +11,26 @@ from util import save_checkpoint, load_checkpoint
 from multiclass_auc import MulticlassAUC
 import random
 
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '1'
+os.environ["TF_CPP_MIN_LOG_LEVEL"] = "1"
+
 
 def make_model():
-    #Emailed the lead author for what these values should be, these are good defaults.
-    model = MQAModel(node_features=(8, 50), edge_features=(1, 32),
-                     hidden_dim=(16, HIDDEN_DIM),
-                     num_layers=NUM_LAYERS, dropout=DROPOUT_RATE, multiclass=True)
+    # Emailed the lead author for what these values should be, these are good defaults.
+    model = MQAModel(
+        node_features=(8, 50),
+        edge_features=(1, 32),
+        hidden_dim=(16, HIDDEN_DIM),
+        num_layers=NUM_LAYERS,
+        dropout=DROPOUT_RATE,
+        multiclass=True,
+    )
     return model
 
+
 def main():
-    trainset, valset, testset = pockets_dataset_fold(BATCH_SIZE, FILESTEM) # batch size = N proteins
+    trainset, valset, testset = pockets_dataset_fold(
+        BATCH_SIZE, FILESTEM
+    )  # batch size = N proteins
     optimizer = tf.keras.optimizers.Adam(learning_rate=LEARNING_RATE)
     model = make_model()
 
@@ -35,11 +44,13 @@ def main():
     for epoch in range(NUM_EPOCHS):
         loss = loop_func(trainset, model, train=True, optimizer=optimizer)
         train_losses.append(loss)
-        print('EPOCH {} training loss: {}'.format(epoch, loss))
+        print("EPOCH {} training loss: {}".format(epoch, loss))
         save_checkpoint(model_path, model, optimizer, model_id, epoch)
 
         # Determine validation loss and performance statistics
-        loss, auc, y_pred, y_true, meta_d = loop_func(valset, model, train=False, test=False)
+        loss, auc, y_pred, y_true, meta_d = loop_func(
+            valset, model, train=False, test=False
+        )
 
         # Save out validation metrics for this epoch
         np.save(os.path.join(outdir, f"val_loss_{epoch}.npy"), loss)
@@ -49,7 +60,7 @@ def main():
         np.save(os.path.join(outdir, f"val_meta_d_{epoch}.npy"), meta_d)
 
         val_losses.append(loss)
-        print(' EPOCH {} validation loss: {}'.format(epoch, loss))
+        print(" EPOCH {} validation loss: {}".format(epoch, loss))
         if loss < best_val:
             best_val = loss
 
@@ -61,13 +72,15 @@ def main():
     path = model_path.format(str(model_id).zfill(3), str(best_epoch).zfill(3))
 
     # Save out training and validation losses
-    np.save(f'{outdir}/cv_loss.npy', val_losses)
-    np.save(f'{outdir}/train_loss.npy', train_losses)
+    np.save(f"{outdir}/cv_loss.npy", val_losses)
+    np.save(f"{outdir}/train_loss.npy", train_losses)
 
     load_checkpoint(model, optimizer, path)
 
-    loss, tp, fp, tn, fn, acc, auc, y_pred, y_true, meta_d = loop_func(testset, model, train=False, test=True)
-    print('EPOCH TEST {:.4f} {:.4f}'.format(loss, acc))
+    loss, tp, fp, tn, fn, acc, auc, y_pred, y_true, meta_d = loop_func(
+        testset, model, train=False, test=True
+    )
+    print("EPOCH TEST {:.4f} {:.4f}".format(loss, acc))
 
     return loss, tp, fp, tn, fn, acc, auc, y_pred, y_true, meta_d
 
@@ -93,7 +106,7 @@ def loop(dataset, model, train=False, optimizer=None, alpha=1, test=False):
         if train:
             with tf.GradientTape() as tape:
                 prediction = model(X, S, M, train=True, res_level=True)
-                #Grab balanced set of residues
+                # Grab balanced set of residues
                 iis = choose_balanced_inds(y)
                 y = tf.gather_nd(y, indices=iis)
                 # Creates tensor where positive class is 2, int. class is 1
@@ -118,11 +131,11 @@ def loop(dataset, model, train=False, optimizer=None, alpha=1, test=False):
             # y = tf.cast(y, tf.float32)
             prediction = tf.gather_nd(prediction, indices=iis)
             loss_value = loss_fn(y, prediction)
-            #to be able to identify each y value with its protein and resid
+            # to be able to identify each y value with its protein and resid
             meta_pairs = [(meta[ind[0]].numpy(), ind[1]) for ind in iis]
             meta_d.extend(meta_pairs)
         if train:
-            assert(np.isfinite(float(loss_value)))
+            assert np.isfinite(float(loss_value))
             grads = tape.gradient(loss_value, model.trainable_weights)
             optimizer.apply_gradients(zip(grads, model.trainable_weights))
 
@@ -178,19 +191,23 @@ def convert_test_targs(y):
         iis_neg = [np.where(np.array(i) < neg_thresh)[0] for i in y]
         iis = []
         count = 0
-        for i, j in zip(iis_pos,iis_neg):
-            subset_iis = [[count,s] for s in j]
+        for i, j in zip(iis_pos, iis_neg):
+            subset_iis = [[count, s] for s in j]
             for pair in subset_iis:
                 iis.append(pair)
-            subset_iis = [[count,s] for s in i]
+            subset_iis = [[count, s] for s in i]
             for pair in subset_iis:
                 iis.append(pair)
-            count+=1
+            count += 1
         return iis
     else:
-        iis = [[struct_index, res_index] for struct_index, y_vals in enumerate(y)
-               for res_index in range(len(np.array(y_vals)))]
+        iis = [
+            [struct_index, res_index]
+            for struct_index, y_vals in enumerate(y)
+            for res_index in range(len(np.array(y_vals)))
+        ]
         return iis
+
 
 def choose_balanced_inds(y):
     iis_pos = [np.where(np.array(i) >= pos_thresh)[0] for i in y]
@@ -204,29 +221,29 @@ def choose_balanced_inds(y):
         # print(len(i),len(j))
         if len(i) < len(j):
             subset = np.random.choice(j, len(i), replace=False)
-            subset_iis = [[count,s] for s in subset]
+            subset_iis = [[count, s] for s in subset]
             for pair in subset_iis:
                 iis.append(pair)
-            subset_iis = [[count,s] for s in i]
+            subset_iis = [[count, s] for s in i]
             for pair in subset_iis:
                 iis.append(pair)
         elif len(j) < len(i):
             subset = np.random.choice(i, len(j), replace=False)
-            subset_iis = [[count,s] for s in subset]
+            subset_iis = [[count, s] for s in subset]
             for pair in subset_iis:
                 iis.append(pair)
-            subset_iis = [[count,s] for s in j]
+            subset_iis = [[count, s] for s in j]
             for pair in subset_iis:
                 iis.append(pair)
         else:
-            subset_iis = [[count,s] for s in j]
+            subset_iis = [[count, s] for s in j]
             for pair in subset_iis:
                 iis.append(pair)
-            subset_iis = [[count,s] for s in i]
+            subset_iis = [[count, s] for s in i]
             for pair in subset_iis:
                 iis.append(pair)
 
-        count+=1
+        count += 1
     # select a random residue when there are no positive examples (or negative)
     # for a given structure
     if len(iis) == 0:
@@ -241,7 +258,7 @@ def choose_balanced_inds(y):
 ######### INPUTS ##########
 ## Define global variables
 
-featurization_method = 'nearby-pv-procedure'
+featurization_method = "nearby-pv-procedure"
 discard_intermediates = False
 train_on_intermediates = True
 min_rank = 7
@@ -261,15 +278,17 @@ fold = int(sys.argv[2])
 #####
 
 
-outdir = (f"/project/bowmanlab/ameller/gvp/5-fold-cv-window-40-nearby-pv-procedure/"
-          f"net_8-50_1-32_16-100_"
-          f"lr_{LEARNING_RATE}_dr_{DROPOUT_RATE}_"
-          f"nl_{NUM_LAYERS}_hd_{HIDDEN_DIM}_"
-          f"b{BATCH_SIZE}_{NUM_EPOCHS}epoch_"
-          f"feat_method_{featurization_method}_rank_{min_rank}_"
-          f"stride_{stride}_"
-          f"pos{pos_thresh}_neg{neg_thresh}_window_{window}ns_"
-          f"multiclass_fold_{fold}/")
+outdir = (
+    f"/project/bowmanlab/ameller/gvp/5-fold-cv-window-40-nearby-pv-procedure/"
+    f"net_8-50_1-32_16-100_"
+    f"lr_{LEARNING_RATE}_dr_{DROPOUT_RATE}_"
+    f"nl_{NUM_LAYERS}_hd_{HIDDEN_DIM}_"
+    f"b{BATCH_SIZE}_{NUM_EPOCHS}epoch_"
+    f"feat_method_{featurization_method}_rank_{min_rank}_"
+    f"stride_{stride}_"
+    f"pos{pos_thresh}_neg{neg_thresh}_window_{window}ns_"
+    f"multiclass_fold_{fold}/"
+)
 
 
 ###########################
@@ -277,31 +296,31 @@ outdir = (f"/project/bowmanlab/ameller/gvp/5-fold-cv-window-40-nearby-pv-procedu
 print(outdir)
 
 os.makedirs(outdir, exist_ok=True)
-model_path = outdir + '{}_{}'
-FILESTEM = f'{featurization_method}-min-rank-{min_rank}-window-{window}-stride-{stride}-cv-fold-{fold}'
+model_path = outdir + "{}_{}"
+FILESTEM = f"{featurization_method}-min-rank-{min_rank}-window-{window}-stride-{stride}-cv-fold-{fold}"
 
 #### GPU INFO ####
-#tf.debugging.enable_check_numerics()
-gpus = tf.config.experimental.list_physical_devices('GPU')
+# tf.debugging.enable_check_numerics()
+gpus = tf.config.experimental.list_physical_devices("GPU")
 if gpus:
-  try:
-    # Currently, memory growth needs to be the same across GPUs
-    for gpu in gpus:
-      tf.config.experimental.set_memory_growth(gpu, True)
-    logical_gpus = tf.config.experimental.list_logical_devices('GPU')
-    print(len(gpus), "Physical GPUs,", len(logical_gpus), "Logical GPUs")
-  except RuntimeError as e:
-    # Memory growth must be set before GPUs have been initialized
-    print(e)
+    try:
+        # Currently, memory growth needs to be the same across GPUs
+        for gpu in gpus:
+            tf.config.experimental.set_memory_growth(gpu, True)
+        logical_gpus = tf.config.experimental.list_logical_devices("GPU")
+        print(len(gpus), "Physical GPUs,", len(logical_gpus), "Logical GPUs")
+    except RuntimeError as e:
+        # Memory growth must be set before GPUs have been initialized
+        print(e)
 #####################
 
 ##### PERFORMANCE METRICS ########
-tp_metric = keras.metrics.TruePositives(name='tp')
-fp_metric = keras.metrics.FalsePositives(name='fp')
-tn_metric = keras.metrics.TrueNegatives(name='tn')
-fn_metric = keras.metrics.FalseNegatives(name='fn')
+tp_metric = keras.metrics.TruePositives(name="tp")
+fp_metric = keras.metrics.FalsePositives(name="fp")
+tn_metric = keras.metrics.TrueNegatives(name="tn")
+fn_metric = keras.metrics.FalseNegatives(name="fn")
 
-acc_metric = keras.metrics.SparseCategoricalAccuracy(name='accuracy')
+acc_metric = keras.metrics.SparseCategoricalAccuracy(name="accuracy")
 
 # pos_label is 2
 auc_metric = MulticlassAUC(2)
@@ -314,14 +333,14 @@ loss, tp, fp, tn, fn, acc, auc, y_pred, y_true, meta_d = main()
 #################################
 
 ####### SAVE TEST RESULTS ########
-np.save(os.path.join(outdir,"test_loss.npy"), loss)
-np.save(os.path.join(outdir,"test_tp.npy"), tp)
-np.save(os.path.join(outdir,"test_fp.npy"), fp)
-np.save(os.path.join(outdir,"test_tn.npy"), tn)
-np.save(os.path.join(outdir,"test_fn.npy"), fn)
-np.save(os.path.join(outdir,"test_acc.npy"), acc)
-np.save(os.path.join(outdir,"test_auc.npy"), auc)
-np.save(os.path.join(outdir,"test_y_pred.npy"), y_pred)
-np.save(os.path.join(outdir,"test_y_true.npy"), y_true)
-np.save(os.path.join(outdir,"test_meta_d.npy"), meta_d)
+np.save(os.path.join(outdir, "test_loss.npy"), loss)
+np.save(os.path.join(outdir, "test_tp.npy"), tp)
+np.save(os.path.join(outdir, "test_fp.npy"), fp)
+np.save(os.path.join(outdir, "test_tn.npy"), tn)
+np.save(os.path.join(outdir, "test_fn.npy"), fn)
+np.save(os.path.join(outdir, "test_acc.npy"), acc)
+np.save(os.path.join(outdir, "test_auc.npy"), auc)
+np.save(os.path.join(outdir, "test_y_pred.npy"), y_pred)
+np.save(os.path.join(outdir, "test_y_true.npy"), y_true)
+np.save(os.path.join(outdir, "test_meta_d.npy"), meta_d)
 ##################################
