@@ -1,7 +1,7 @@
 import sys
 from datetime import datetime
 from datasets import *
-import random, pdb, sys
+import random, sys
 import numpy as np
 import tqdm, util
 from models import *

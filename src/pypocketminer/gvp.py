@@ -1,5 +1,5 @@
 import tensorflow as tf
-import tqdm, pdb
+import tqdm
 from tensorflow.keras import Model
 from tensorflow.keras.layers import *
 

@@ -1,6 +1,13 @@
 [project]
 name = "pypocketminer"
 version = "0"
+dependencies = [
+  "numpy",
+  "pandas",
+  "mdtraj",
+  "tqdm",
+  "tensorflow"
+]
 
 [build-system]
 requires = [ "setuptools" ]

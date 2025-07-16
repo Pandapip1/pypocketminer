@@ -3,7 +3,7 @@ import tensorflow as tf
 from datetime import datetime
 from datasets import *
 import tqdm, sys
-import util, pdb
+import util
 from tensorflow import keras as keras
 from models import *
 import os
