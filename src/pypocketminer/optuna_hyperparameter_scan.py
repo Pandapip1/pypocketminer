@@ -11,7 +11,7 @@ import sys
 from datasets import *
 from models import *
 
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '1'
+os.environ["TF_CPP_MIN_LOG_LEVEL"] = "1"
 
 NUM_EPOCHS = 20
 pos_thresh = 116
@@ -25,14 +25,15 @@ fold = int(sys.argv[1])
 # Input data specs
 min_rank = 7
 stride = 1
-featurization_method = 'nearby-pv-procedure'
+featurization_method = "nearby-pv-procedure"
 
 
-FILESTEM = f'{featurization_method}-min-rank-{min_rank}-window-{window}-stride-{stride}-cv-fold-{fold}'
+FILESTEM = f"{featurization_method}-min-rank-{min_rank}-window-{window}-stride-{stride}-cv-fold-{fold}"
 # Output data directory
 outdir = f"/project/bowmanlab/ameller/gvp/optuna/{FILESTEM}"
 
 loss_fn = tf.keras.losses.BinaryCrossentropy(from_logits=False)
+
 
 def make_model(dropout_rate, num_layers, hidden_dim):
     model = MQAModel(
@@ -58,11 +59,13 @@ def main_cv(learning_rate, dropout_rate, num_layers, hidden_layers):
     val_losses = []
 
     # Maintain ROC AUC, PR AUC metrics throughout training
-    auc_metric = keras.metrics.AUC(name='auc')
-    pr_auc_metric = keras.metrics.AUC(curve='PR', name='pr_auc')
+    auc_metric = keras.metrics.AUC(name="auc")
+    pr_auc_metric = keras.metrics.AUC(curve="PR", name="pr_auc")
 
     for epoch in range(NUM_EPOCHS):
-        loss, y_pred, y_true, meta_d = loop_func(trainset, model, train=True, optimizer=optimizer)
+        loss, y_pred, y_true, meta_d = loop_func(
+            trainset, model, train=True, optimizer=optimizer
+        )
         print("CV FOLD {} EPOCH {} training loss: {:.4f}".format(fold, epoch, loss))
         loss, y_pred, y_true, meta_d = loop_func(valset, model, train=False, val=False)
         val_losses.append(loss)
@@ -79,43 +82,69 @@ def main_cv(learning_rate, dropout_rate, num_layers, hidden_layers):
         if current_auc < best_auc:
             best_epoch, best_auc = epoch, current_auc
 
-        np.save(os.path.join(outdir,
-                             f"val_lr_{learning_rate:.5f}_"
-                             f"dr_{dropout_rate:.5f}_nl_{num_layers}_"
-                             f"hl_{hidden_layers}_loss_{epoch}.npy"),
-                loss)
-        np.save(os.path.join(outdir,
-                             f"val_lr_{learning_rate:.5f}_"
-                             f"dr_{dropout_rate:.5f}_nl_{num_layers}_"
-                             f"hl_{hidden_layers}_auc_{epoch}.npy"),
-                auc_metric.result().numpy())
-        np.save(os.path.join(outdir,
-                             f"val_lr_{learning_rate:.5f}_"
-                             f"dr_{dropout_rate:.5f}_nl_{num_layers}_"
-                             f"hl_{hidden_layers}_pr_auc_{epoch}.npy"),
-                pr_auc_metric.result().numpy())
-        np.save(os.path.join(outdir,
-                             f"val_lr_{learning_rate:.5f}_"
-                             f"dr_{dropout_rate:.5f}_nl_{num_layers}_"
-                             f"hl_{hidden_layers}_y_pred_{epoch}.npy"),
-                y_pred)
-        np.save(os.path.join(outdir,
-                             f"val_lr_{learning_rate:.5f}_"
-                             f"dr_{dropout_rate:.5f}_nl_{num_layers}_"
-                             f"hl_{hidden_layers}_y_true_{epoch}.npy"),
-                y_true)
-        np.save(os.path.join(outdir,
-                             f"val_lr_{learning_rate:.5f}_"
-                             f"dr_{dropout_rate:.5f}_nl_{num_layers}_"
-                             f"hl_{hidden_layers}_meta_d_{epoch}.npy"),
-                meta_d)
+        np.save(
+            os.path.join(
+                outdir,
+                f"val_lr_{learning_rate:.5f}_"
+                f"dr_{dropout_rate:.5f}_nl_{num_layers}_"
+                f"hl_{hidden_layers}_loss_{epoch}.npy",
+            ),
+            loss,
+        )
+        np.save(
+            os.path.join(
+                outdir,
+                f"val_lr_{learning_rate:.5f}_"
+                f"dr_{dropout_rate:.5f}_nl_{num_layers}_"
+                f"hl_{hidden_layers}_auc_{epoch}.npy",
+            ),
+            auc_metric.result().numpy(),
+        )
+        np.save(
+            os.path.join(
+                outdir,
+                f"val_lr_{learning_rate:.5f}_"
+                f"dr_{dropout_rate:.5f}_nl_{num_layers}_"
+                f"hl_{hidden_layers}_pr_auc_{epoch}.npy",
+            ),
+            pr_auc_metric.result().numpy(),
+        )
+        np.save(
+            os.path.join(
+                outdir,
+                f"val_lr_{learning_rate:.5f}_"
+                f"dr_{dropout_rate:.5f}_nl_{num_layers}_"
+                f"hl_{hidden_layers}_y_pred_{epoch}.npy",
+            ),
+            y_pred,
+        )
+        np.save(
+            os.path.join(
+                outdir,
+                f"val_lr_{learning_rate:.5f}_"
+                f"dr_{dropout_rate:.5f}_nl_{num_layers}_"
+                f"hl_{hidden_layers}_y_true_{epoch}.npy",
+            ),
+            y_true,
+        )
+        np.save(
+            os.path.join(
+                outdir,
+                f"val_lr_{learning_rate:.5f}_"
+                f"dr_{dropout_rate:.5f}_nl_{num_layers}_"
+                f"hl_{hidden_layers}_meta_d_{epoch}.npy",
+            ),
+            meta_d,
+        )
 
         auc_metric.reset_states()
         pr_auc_metric.reset_states()
 
     # Save out validation losses
-    np.save(f"{outdir}/val_lr_{learning_rate:.5f}_dr_{dropout_rate:.5f}_nl_{num_layers}_hl_{hidden_layers}_cv_loss.npy",
-            val_losses)
+    np.save(
+        f"{outdir}/val_lr_{learning_rate:.5f}_dr_{dropout_rate:.5f}_nl_{num_layers}_hl_{hidden_layers}_cv_loss.npy",
+        val_losses,
+    )
 
     return best_auc
 
@@ -148,7 +177,7 @@ def loop(dataset, model, train=False, optimizer=None, alpha=1, val=False):
             y = tf.cast(y, tf.float32)
             prediction = tf.gather_nd(prediction, indices=iis)
             loss_value = loss_fn(y, prediction)
-            #to be able to identify each y value with its protein and resid
+            # to be able to identify each y value with its protein and resid
             meta_pairs = [(meta[ind[0]].numpy(), ind[1]) for ind in iis]
             meta_d.extend(meta_pairs)
         if train:
@@ -249,31 +278,34 @@ def objective(trial):
     num_layers = trial.suggest_categorical("num_layers", [4])
     hidden_layers = trial.suggest_categorical("hid_layers", [50, 75, 100])
 
-    print(f'running trial with learning rate: {learning_rate: .4f}, dropout rate: {dropout_rate: .4f}'
-          f', number of layers: {num_layers}, and hidden layers: {hidden_layers}')
+    print(
+        f"running trial with learning rate: {learning_rate: .4f}, dropout rate: {dropout_rate: .4f}"
+        f", number of layers: {num_layers}, and hidden layers: {hidden_layers}"
+    )
 
     best_auc = main_cv(
         learning_rate=learning_rate,
         dropout_rate=dropout_rate,
         num_layers=num_layers,
-        hidden_layers=hidden_layers)
+        hidden_layers=hidden_layers,
+    )
 
     return best_auc
 
 
 if __name__ == "__main__":
     #### GPU INFO ####
-    #tf.debugging.enable_check_numerics()
+    # tf.debugging.enable_check_numerics()
     os.makedirs(outdir, exist_ok=True)
-    model_path = outdir + '{}_{}'
+    model_path = outdir + "{}_{}"
 
-    gpus = tf.config.experimental.list_physical_devices('GPU')
+    gpus = tf.config.experimental.list_physical_devices("GPU")
     if gpus:
         try:
             # Currently, memory growth needs to be the same across GPUs
             for gpu in gpus:
                 tf.config.experimental.set_memory_growth(gpu, True)
-            logical_gpus = tf.config.experimental.list_logical_devices('GPU')
+            logical_gpus = tf.config.experimental.list_logical_devices("GPU")
             print(len(gpus), "Physical GPUs,", len(logical_gpus), "Logical GPUs")
         except RuntimeError as e:
             # Memory growth must be set before GPUs have been initialized

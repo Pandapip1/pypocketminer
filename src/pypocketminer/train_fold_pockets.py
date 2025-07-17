@@ -9,23 +9,35 @@ import os
 from util import save_checkpoint, load_checkpoint
 import random
 
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '1'
+os.environ["TF_CPP_MIN_LOG_LEVEL"] = "1"
+
 
 def make_model():
-    #Emailed the lead author for what these values should be, these are good defaults.
-    model = MQAModel(node_features=(8, 50), edge_features=(1, 32),
-                     hidden_dim=(16, HIDDEN_DIM),
-                     num_layers=NUM_LAYERS, dropout=DROPOUT_RATE)
+    # Emailed the lead author for what these values should be, these are good defaults.
+    model = MQAModel(
+        node_features=(8, 50),
+        edge_features=(1, 32),
+        hidden_dim=(16, HIDDEN_DIM),
+        num_layers=NUM_LAYERS,
+        dropout=DROPOUT_RATE,
+    )
     return model
+
 
 def main():
     # Prepare data
-    trainset, valset, testset = pockets_dataset_fold(BATCH_SIZE, FILESTEM) # batch size = N proteins
+    trainset, valset, testset = pockets_dataset_fold(
+        BATCH_SIZE, FILESTEM
+    )  # batch size = N proteins
     if weight_globally:
         if train_on_intermediates:
-            positive_weight, negative_weight = determine_global_weights(FILESTEM, pos_thresh, pos_thresh)
+            positive_weight, negative_weight = determine_global_weights(
+                FILESTEM, pos_thresh, pos_thresh
+            )
         else:
-            positive_weight, negative_weight = determine_global_weights(FILESTEM, pos_thresh, neg_thresh)
+            positive_weight, negative_weight = determine_global_weights(
+                FILESTEM, pos_thresh, neg_thresh
+            )
 
     # Set optimizer and make model
     optimizer = tf.keras.optimizers.Adam(learning_rate=LEARNING_RATE)
@@ -40,13 +52,20 @@ def main():
 
     for epoch in range(NUM_EPOCHS):
         if weight_globally:
-            loss, y_pred, y_true = loop_func(trainset, model, train=True, optimizer=optimizer,
-                                             positive_weight=positive_weight,
-                                             negative_weight=negative_weight)
+            loss, y_pred, y_true = loop_func(
+                trainset,
+                model,
+                train=True,
+                optimizer=optimizer,
+                positive_weight=positive_weight,
+                negative_weight=negative_weight,
+            )
         else:
-            loss, y_pred, y_true = loop_func(trainset, model, train=True, optimizer=optimizer)
+            loss, y_pred, y_true = loop_func(
+                trainset, model, train=True, optimizer=optimizer
+            )
         train_losses.append(loss)
-        print('EPOCH {} training loss: {}'.format(epoch, loss))
+        print("EPOCH {} training loss: {}".format(epoch, loss))
 
         # For debugging save out train predictions and true values
         np.save(os.path.join(outdir, f"train_loss_{epoch}.npy"), loss)
@@ -56,7 +75,9 @@ def main():
         save_checkpoint(model_path, model, optimizer, model_id, epoch)
 
         # Determine validation loss and performance statistics
-        loss, auc, pr_auc, y_pred, y_true, meta_d = loop_func(valset, model, train=False, test=False)
+        loss, auc, pr_auc, y_pred, y_true, meta_d = loop_func(
+            valset, model, train=False, test=False
+        )
 
         # Save out validation metrics for this epoch
         np.save(os.path.join(outdir, f"val_loss_{epoch}.npy"), loss)
@@ -67,7 +88,7 @@ def main():
         np.save(os.path.join(outdir, f"val_meta_d_{epoch}.npy"), meta_d)
 
         val_losses.append(loss)
-        print(' EPOCH {} validation loss: {}'.format(epoch, loss))
+        print(" EPOCH {} validation loss: {}".format(epoch, loss))
         if loss < best_val:
             best_val = loss
 
@@ -76,27 +97,37 @@ def main():
             best_epoch, best_pr_auc = epoch, pr_auc
 
     # Test with best validation loss
-    print(f'Best AUC is in epoch {best_epoch}')
+    print(f"Best AUC is in epoch {best_epoch}")
     path = model_path.format(str(model_id).zfill(3), str(best_epoch).zfill(3))
 
     # Save out training and validation losses
-    np.save(f'{outdir}/cv_loss.npy', val_losses)
-    np.save(f'{outdir}/train_loss.npy', train_losses)
+    np.save(f"{outdir}/cv_loss.npy", val_losses)
+    np.save(f"{outdir}/train_loss.npy", train_losses)
 
     load_checkpoint(model, optimizer, path)
 
-    loss, tp, fp, tn, fn, acc, prec, recall, auc, pr_auc, y_pred, y_true, meta_d = loop_func(testset, model, train=False, test=True)
-    print('EPOCH TEST {:.4f} {:.4f}'.format(loss, acc))
+    loss, tp, fp, tn, fn, acc, prec, recall, auc, pr_auc, y_pred, y_true, meta_d = (
+        loop_func(testset, model, train=False, test=True)
+    )
+    print("EPOCH TEST {:.4f} {:.4f}".format(loss, acc))
 
     # Validate performance on xtals
     predictions = predict_on_xtals(model, xtal_validation_path)
-    np.save(f'{outdir}/xtal_val_set_predictions.npy', predictions)
+    np.save(f"{outdir}/xtal_val_set_predictions.npy", predictions)
 
     return loss, tp, fp, tn, fn, acc, prec, recall, auc, pr_auc, y_pred, y_true, meta_d
 
 
-def loop(dataset, model, train=False, optimizer=None, alpha=1, test=False,
-         positive_weight=1, negative_weight=1):
+def loop(
+    dataset,
+    model,
+    train=False,
+    optimizer=None,
+    alpha=1,
+    test=False,
+    positive_weight=1,
+    negative_weight=1,
+):
     # if running validation or testing
     if test:
         tp_metric.reset_states()
@@ -136,7 +167,9 @@ def loop(dataset, model, train=False, optimizer=None, alpha=1, test=False,
                 else:
                     if weight_loss:
                         if weight_globally:
-                            iis, weights = use_global_weights(y, positive_weight, negative_weight)
+                            iis, weights = use_global_weights(
+                                y, positive_weight, negative_weight
+                            )
                         # determine weights at protein level
                         else:
                             iis, weights = get_weights(y)
@@ -170,11 +203,11 @@ def loop(dataset, model, train=False, optimizer=None, alpha=1, test=False,
             y = tf.cast(y, tf.float32)
             prediction = tf.gather_nd(prediction, indices=iis)
             loss_value = loss_fn(y, prediction)
-            #to be able to identify each y value with its protein and resid
+            # to be able to identify each y value with its protein and resid
             meta_pairs = [(meta[ind[0]].numpy(), ind[1]) for ind in iis]
             meta_d.extend(meta_pairs)
         if train:
-            assert(np.isfinite(float(loss_value)))
+            assert np.isfinite(float(loss_value))
             grads = tape.gradient(loss_value, model.trainable_weights)
             optimizer.apply_gradients(zip(grads, model.trainable_weights))
 
@@ -220,7 +253,21 @@ def loop(dataset, model, train=False, optimizer=None, alpha=1, test=False,
     if train:
         return np.mean(losses), y_pred, y_true
     elif test:
-        return np.mean(losses), tp, fp, tn, fn, acc, prec, recall, auc, pr_auc, y_pred, y_true, meta_d
+        return (
+            np.mean(losses),
+            tp,
+            fp,
+            tn,
+            fn,
+            acc,
+            prec,
+            recall,
+            auc,
+            pr_auc,
+            y_pred,
+            y_true,
+            meta_d,
+        )
     # validation call
     else:
         return np.mean(losses), auc, pr_auc, y_pred, y_true, meta_d
@@ -234,59 +281,70 @@ def convert_test_targs(y):
         iis_neg = [np.where(np.array(i) < neg_thresh)[0] for i in y]
         iis = []
         count = 0
-        for i, j in zip(iis_pos,iis_neg):
-            subset_iis = [[count,s] for s in j]
+        for i, j in zip(iis_pos, iis_neg):
+            subset_iis = [[count, s] for s in j]
             for pair in subset_iis:
                 iis.append(pair)
-            subset_iis = [[count,s] for s in i]
+            subset_iis = [[count, s] for s in i]
             for pair in subset_iis:
                 iis.append(pair)
-            count+=1
+            count += 1
         return iis
     else:
-        iis = [[struct_index, res_index]
-               for struct_index, y_vals in enumerate(y)
-               for res_index in range(len(y_vals))]
+        iis = [
+            [struct_index, res_index]
+            for struct_index, y_vals in enumerate(y)
+            for res_index in range(len(y_vals))
+        ]
         return iis
+
 
 def get_indices(y):
     if train_on_intermediates:
-        iis = [[struct_index, res_index]
-               for struct_index, y_vals in enumerate(y)
-               for res_index in range(len(y_vals))]
+        iis = [
+            [struct_index, res_index]
+            for struct_index, y_vals in enumerate(y)
+            for res_index in range(len(y_vals))
+        ]
     else:
-        iis = [[struct_index, res_index]
-               for struct_index, y_vals in enumerate(y)
-               for res_index, res_example in enumerate(y_vals)
-               if res_example >= pos_thresh or res_example < neg_thresh]
+        iis = [
+            [struct_index, res_index]
+            for struct_index, y_vals in enumerate(y)
+            for res_index, res_example in enumerate(y_vals)
+            if res_example >= pos_thresh or res_example < neg_thresh
+        ]
     return iis
+
 
 def use_global_weights(y, positive_weight, negative_weight):
     if train_on_intermediates:
-        iis = [[struct_index, res_index]
-               for struct_index, y_vals in enumerate(y)
-               for res_index in range(len(y_vals))]
+        iis = [
+            [struct_index, res_index]
+            for struct_index, y_vals in enumerate(y)
+            for res_index in range(len(y_vals))
+        ]
         # Determine weights based on y values
         weights = [
-            positive_weight if res_example >= pos_thresh
-            else negative_weight
+            positive_weight if res_example >= pos_thresh else negative_weight
             for y_vals in y
             for res_example in y_vals
         ]
     else:
-        iis = [[struct_index, res_index]
-               for struct_index, y_vals in enumerate(y)
-               for res_index, res_example in enumerate(y_vals)
-               if res_example >= pos_thresh or res_example < neg_thresh]
+        iis = [
+            [struct_index, res_index]
+            for struct_index, y_vals in enumerate(y)
+            for res_index, res_example in enumerate(y_vals)
+            if res_example >= pos_thresh or res_example < neg_thresh
+        ]
         # Determine weights based on y values
         weights = [
-            positive_weight if res_example >= pos_thresh
-            else negative_weight
+            positive_weight if res_example >= pos_thresh else negative_weight
             for y_vals in y
             for res_example in y_vals
             if res_example >= pos_thresh or res_example < neg_thresh
         ]
     return iis, weights
+
 
 def get_weights(y):
     iis = []
@@ -299,32 +357,41 @@ def get_weights(y):
             neg_residue_count = np.sum(np.array(example) < neg_thresh)
         total_residue_count = pos_residue_count + neg_residue_count
         if train_on_intermediates:
-            weights.extend([
-                1 / pos_residue_count * (total_residue_count / 2.0)
-                if y_vals >= pos_thresh
-                else 1 / neg_residue_count * (total_residue_count / 2.0)
-                for y_vals in example
-            ])
-            iis.extend([
-                [struct_index, res_index]
-                for res_index in range(len(example))
-            ])
+            weights.extend(
+                [
+                    (
+                        1 / pos_residue_count * (total_residue_count / 2.0)
+                        if y_vals >= pos_thresh
+                        else 1 / neg_residue_count * (total_residue_count / 2.0)
+                    )
+                    for y_vals in example
+                ]
+            )
+            iis.extend([[struct_index, res_index] for res_index in range(len(example))])
         else:
-            weights.extend([
-                1 / pos_residue_count * (total_residue_count / 2.0)
-                if y_vals >= pos_thresh
-                else 1 / neg_residue_count * (total_residue_count / 2.0)
-                for y_vals in example
-                if y_vals >= pos_thresh or y_vals < neg_thresh
-            ])
-            iis.extend([
-                [struct_index, res_index]
-                for res_index in range(len(example))
-                if example[res_index] >= pos_thresh or example[res_index] < neg_thresh
-            ])
+            weights.extend(
+                [
+                    (
+                        1 / pos_residue_count * (total_residue_count / 2.0)
+                        if y_vals >= pos_thresh
+                        else 1 / neg_residue_count * (total_residue_count / 2.0)
+                    )
+                    for y_vals in example
+                    if y_vals >= pos_thresh or y_vals < neg_thresh
+                ]
+            )
+            iis.extend(
+                [
+                    [struct_index, res_index]
+                    for res_index in range(len(example))
+                    if example[res_index] >= pos_thresh
+                    or example[res_index] < neg_thresh
+                ]
+            )
         if pos_residue_count == 0 or neg_residue_count == 0:
             assert np.all([w == 1.0 for w in weights])
     return iis, weights
+
 
 def choose_balanced_inds_oversampling(y):
     pos_mask = np.array(y) >= pos_thresh
@@ -335,35 +402,50 @@ def choose_balanced_inds_oversampling(y):
 
     positive_example_count = pos_mask.sum()
     negative_example_count = neg_mask.sum()
-    if (positive_example_count > 0 and negative_example_count > 0):
+    if positive_example_count > 0 and negative_example_count > 0:
         struct_indices, residue_indices = np.where(pos_mask)
         # creates a N x 2 list where N is the number of examples
-        pos_indices = np.array([[si, ri] for si, ri in
-                                zip(struct_indices, residue_indices)])
+        pos_indices = np.array(
+            [[si, ri] for si, ri in zip(struct_indices, residue_indices)]
+        )
         struct_indices, residue_indices = np.where(neg_mask)
-        neg_indices = np.array([[si, ri] for si, ri in
-                                zip(struct_indices, residue_indices)])
+        neg_indices = np.array(
+            [[si, ri] for si, ri in zip(struct_indices, residue_indices)]
+        )
         # combine into single selection where the number of positive
         # examples matches the number of negative examples
         # if there are m and n examples from the two classes respectively and m < n,
         # we select a random set of n examples from the minority class
-        pos_selection = (pos_indices if positive_example_count >= negative_example_count
-                         else pos_indices[np.random.choice(range(positive_example_count),
-                                                           negative_example_count)])
-        neg_selection = (neg_indices if positive_example_count <= negative_example_count
-                         else neg_indices[np.random.choice(range(negative_example_count),
-                                                           positive_example_count)])
+        pos_selection = (
+            pos_indices
+            if positive_example_count >= negative_example_count
+            else pos_indices[
+                np.random.choice(range(positive_example_count), negative_example_count)
+            ]
+        )
+        neg_selection = (
+            neg_indices
+            if positive_example_count <= negative_example_count
+            else neg_indices[
+                np.random.choice(range(negative_example_count), positive_example_count)
+            ]
+        )
         selection = np.concatenate((pos_selection, neg_selection))
 
         # assert that number of selected residues is 2 x the number of examples
         # in the majority class
-        assert selection.shape[0] == max(negative_example_count, positive_example_count) * 2
+        assert (
+            selection.shape[0]
+            == max(negative_example_count, positive_example_count) * 2
+        )
         return selection.tolist()
     # if there are no negative or positive examples in the batch return all indices
     else:
-        return [[struct_index, res_index]
-                for struct_index, y_vals in enumerate(y)
-                for res_index in range(len(y_vals))]
+        return [
+            [struct_index, res_index]
+            for struct_index, y_vals in enumerate(y)
+            for res_index in range(len(y_vals))
+        ]
 
 
 def choose_balanced_inds_undersampling(y):
@@ -375,39 +457,58 @@ def choose_balanced_inds_undersampling(y):
 
     positive_example_count = pos_mask.sum()
     negative_example_count = neg_mask.sum()
-    if (positive_example_count > 0 and negative_example_count > 0):
+    if positive_example_count > 0 and negative_example_count > 0:
         struct_indices, residue_indices = np.where(pos_mask)
         # creates a N x 2 list where N is the number of examples
-        pos_indices = np.array([[si, ri] for si, ri in
-                                zip(struct_indices, residue_indices)])
+        pos_indices = np.array(
+            [[si, ri] for si, ri in zip(struct_indices, residue_indices)]
+        )
         struct_indices, residue_indices = np.where(neg_mask)
-        neg_indices = np.array([[si, ri] for si, ri in
-                                zip(struct_indices, residue_indices)])
+        neg_indices = np.array(
+            [[si, ri] for si, ri in zip(struct_indices, residue_indices)]
+        )
         # combine into single selection where the number of positive
         # examples matches the number of negative examples
         # if there are m and n examples from the two classes respectively and m < n,
         # we select a random set of m examples from the majority class
-        pos_selection = (pos_indices if positive_example_count <= negative_example_count
-                         else pos_indices[np.random.choice(range(positive_example_count),
-                                                           negative_example_count, replace=False)])
-        neg_selection = (neg_indices if positive_example_count >= negative_example_count
-                         else neg_indices[np.random.choice(range(negative_example_count),
-                                                           positive_example_count, replace=False)])
+        pos_selection = (
+            pos_indices
+            if positive_example_count <= negative_example_count
+            else pos_indices[
+                np.random.choice(
+                    range(positive_example_count), negative_example_count, replace=False
+                )
+            ]
+        )
+        neg_selection = (
+            neg_indices
+            if positive_example_count >= negative_example_count
+            else neg_indices[
+                np.random.choice(
+                    range(negative_example_count), positive_example_count, replace=False
+                )
+            ]
+        )
         selection = np.concatenate((pos_selection, neg_selection))
 
         # assert that number of selected residues is 2 x the number of examples
         # in the minority class
-        assert selection.shape[0] == min(negative_example_count, positive_example_count) * 2
+        assert (
+            selection.shape[0]
+            == min(negative_example_count, positive_example_count) * 2
+        )
         return selection.tolist()
     # if there are no negative or positive examples in the batch return all indices
     else:
-        return [[struct_index, res_index]
-                for struct_index, y_vals in enumerate(y)
-                for res_index in range(len(y_vals))]
+        return [
+            [struct_index, res_index]
+            for struct_index, y_vals in enumerate(y)
+            for res_index in range(len(y_vals))
+        ]
+
 
 def process_struc(strucs):
-    """Takes a list of single frame md.Trajectory objects
-    """
+    """Takes a list of single frame md.Trajectory objects"""
 
     pdbs = []
     for s in strucs:
@@ -427,25 +528,27 @@ def process_struc(strucs):
 
         seq = [r.name for r in prot_bb.top.residues]
         S[i, :l] = np.asarray([lookup[abbrev[a]] for a in seq], dtype=np.int32)
-        X[i] = np.pad(xyz, [[0,L_max-l], [0,0], [0,0]],
-                      'constant', constant_values=(np.nan, ))
+        X[i] = np.pad(
+            xyz, [[0, L_max - l], [0, 0], [0, 0]], "constant", constant_values=(np.nan,)
+        )
 
     isnan = np.isnan(X)
-    mask = np.isfinite(np.sum(X,(2,3))).astype(np.float32)
-    X[isnan] = 0.
+    mask = np.isfinite(np.sum(X, (2, 3))).astype(np.float32)
+    X[isnan] = 0.0
     X = np.nan_to_num(X)
 
     return X, S, mask
 
+
 def predict_on_xtals(model, xtal_set_path):
-    '''
+    """
     xtal_set_path : string
         path to npy file containing array of tuples
         where the first entry is a path to a crystal
         structure and the second entry is the labels
         for that xtal (where 1 indicates a cryptic
         residue)
-    '''
+    """
     val_set = np.load(xtal_set_path, allow_pickle=True)
     strucs = [md.load(p[0]) for p in val_set]
     X, S, mask = process_struc(strucs)
@@ -486,7 +589,7 @@ if balance_classes:
 # ----------------------------- #
 
 # ------- LIGSITE INPUT PARAMETERS ---- #
-featurization_method = 'nearby-pv-procedure'
+featurization_method = "nearby-pv-procedure"
 min_rank = 7
 stride = 1
 pos_thresh = 116
@@ -501,9 +604,11 @@ NUM_LAYERS = 4
 
 # ---- XTAL VALIDATION SET -----#
 # file contains pdb path as well as labels
-xtal_validation_path = ('/project/bowmanlab/borowsky.jonathan/FAST-cs/'
-                        'protein-sets/new_pockets/labels/'
-                        'new_pocket_labels_validation_all1.npy')
+xtal_validation_path = (
+    "/project/bowmanlab/borowsky.jonathan/FAST-cs/"
+    "protein-sets/new_pockets/labels/"
+    "new_pocket_labels_validation_all1.npy"
+)
 # ---- END XTAL VALIDATION SET -----#
 
 # from python call
@@ -516,13 +621,15 @@ train_on_intermediates = bool(int(sys.argv[3]))
 
 
 ####### CREATE OUTPUT FILENAMES #####
-base_path = "/project/bowmanlab/ameller/gvp/task1-final-folds-window-40-nearby-pv-procedure"
+base_path = (
+    "/project/bowmanlab/ameller/gvp/task1-final-folds-window-40-nearby-pv-procedure"
+)
 
 if balance_classes:
     if oversample:
-        subdir_name = 'oversample'
+        subdir_name = "oversample"
     elif undersample:
-        subdir_name = 'undersample'
+        subdir_name = "undersample"
 else:
     subdir_name = "no-balancing"
     if weight_loss:
@@ -533,58 +640,60 @@ else:
             subdir_name += "-by-protein"
 
 if train_on_intermediates:
-    subdir_name += '-intermediates-in-training'
+    subdir_name += "-intermediates-in-training"
 else:
-    subdir_name += '-no-intermediates-in-training'
+    subdir_name += "-no-intermediates-in-training"
 
 if discard_intermediates_in_testing:
-    subdir_name += '-discard-intermediates-in-testing'
+    subdir_name += "-discard-intermediates-in-testing"
 
-nn_name = (f"net_8-50_1-32_16-100_"
-           f"dr_{DROPOUT_RATE}_"
-           f"nl_{NUM_LAYERS}_hd_{HIDDEN_DIM}_"
-           f"lr_{LEARNING_RATE}_b{BATCH_SIZE}_{NUM_EPOCHS}epoch_"
-           f"feat_method_{featurization_method}_rank_{min_rank}_"
-           f"stride_{stride}_window_{window}_pos_{pos_thresh}")
+nn_name = (
+    f"net_8-50_1-32_16-100_"
+    f"dr_{DROPOUT_RATE}_"
+    f"nl_{NUM_LAYERS}_hd_{HIDDEN_DIM}_"
+    f"lr_{LEARNING_RATE}_b{BATCH_SIZE}_{NUM_EPOCHS}epoch_"
+    f"feat_method_{featurization_method}_rank_{min_rank}_"
+    f"stride_{stride}_window_{window}_pos_{pos_thresh}"
+)
 
 if not train_on_intermediates or discard_intermediates_in_testing:
     nn_name += f"_neg_{neg_thresh}"
 
-outdir = f'{base_path}/{subdir_name}/{nn_name}_{fold}/'
+outdir = f"{base_path}/{subdir_name}/{nn_name}_{fold}/"
 
 ####### END CREATE OUTPUT FILENAMES #####
 
 print(outdir)
 
 os.makedirs(outdir, exist_ok=True)
-model_path = outdir + '{}_{}'
-FILESTEM = f'{featurization_method}-min-rank-{min_rank}-window-{window}-stride-{stride}-final-task1-fold-{fold}'
+model_path = outdir + "{}_{}"
+FILESTEM = f"{featurization_method}-min-rank-{min_rank}-window-{window}-stride-{stride}-final-task1-fold-{fold}"
 
 #### GPU INFO ####
-#tf.debugging.enable_check_numerics()
-gpus = tf.config.experimental.list_physical_devices('GPU')
+# tf.debugging.enable_check_numerics()
+gpus = tf.config.experimental.list_physical_devices("GPU")
 if gpus:
-  try:
-    # Currently, memory growth needs to be the same across GPUs
-    for gpu in gpus:
-      tf.config.experimental.set_memory_growth(gpu, True)
-    logical_gpus = tf.config.experimental.list_logical_devices('GPU')
-    print(len(gpus), "Physical GPUs,", len(logical_gpus), "Logical GPUs")
-  except RuntimeError as e:
-    # Memory growth must be set before GPUs have been initialized
-    print(e)
+    try:
+        # Currently, memory growth needs to be the same across GPUs
+        for gpu in gpus:
+            tf.config.experimental.set_memory_growth(gpu, True)
+        logical_gpus = tf.config.experimental.list_logical_devices("GPU")
+        print(len(gpus), "Physical GPUs,", len(logical_gpus), "Logical GPUs")
+    except RuntimeError as e:
+        # Memory growth must be set before GPUs have been initialized
+        print(e)
 #####################
 
 ##### PERFORMANCE METRICS ########
-tp_metric = keras.metrics.TruePositives(name='tp')
-fp_metric = keras.metrics.FalsePositives(name='fp')
-tn_metric = keras.metrics.TrueNegatives(name='tn')
-fn_metric = keras.metrics.FalseNegatives(name='fn')
-acc_metric = keras.metrics.BinaryAccuracy(name='accuracy')
-prec_metric = keras.metrics.Precision(name='precision')
-recall_metric = keras.metrics.Recall(name='recall')
-auc_metric = keras.metrics.AUC(name='auc')
-pr_auc_metric = keras.metrics.AUC(curve='PR', name='pr_auc')
+tp_metric = keras.metrics.TruePositives(name="tp")
+fp_metric = keras.metrics.FalsePositives(name="fp")
+tn_metric = keras.metrics.TrueNegatives(name="tn")
+fn_metric = keras.metrics.FalseNegatives(name="fn")
+acc_metric = keras.metrics.BinaryAccuracy(name="accuracy")
+prec_metric = keras.metrics.Precision(name="precision")
+recall_metric = keras.metrics.Recall(name="recall")
+auc_metric = keras.metrics.AUC(name="auc")
+pr_auc_metric = keras.metrics.AUC(curve="PR", name="pr_auc")
 
 loss_fn = tf.keras.losses.BinaryCrossentropy(from_logits=False)
 
@@ -595,17 +704,17 @@ loss, tp, fp, tn, fn, acc, prec, recall, auc, pr_auc, y_pred, y_true, meta_d = m
 #################################
 
 ####### SAVE TEST RESULTS ########
-np.save(os.path.join(outdir,"test_loss.npy"), loss)
-np.save(os.path.join(outdir,"test_tp.npy"), tp)
-np.save(os.path.join(outdir,"test_fp.npy"), fp)
-np.save(os.path.join(outdir,"test_tn.npy"), tn)
-np.save(os.path.join(outdir,"test_fn.npy"), fn)
-np.save(os.path.join(outdir,"test_acc.npy"), acc)
-np.save(os.path.join(outdir,"test_prec.npy"), prec)
-np.save(os.path.join(outdir,"test_recall.npy"), recall)
-np.save(os.path.join(outdir,"test_auc.npy"), auc)
-np.save(os.path.join(outdir,"test_pr_auc.npy"), pr_auc)
-np.save(os.path.join(outdir,"test_y_pred.npy"), y_pred)
-np.save(os.path.join(outdir,"test_y_true.npy"), y_true)
-np.save(os.path.join(outdir,"test_meta_d.npy"), meta_d)
+np.save(os.path.join(outdir, "test_loss.npy"), loss)
+np.save(os.path.join(outdir, "test_tp.npy"), tp)
+np.save(os.path.join(outdir, "test_fp.npy"), fp)
+np.save(os.path.join(outdir, "test_tn.npy"), tn)
+np.save(os.path.join(outdir, "test_fn.npy"), fn)
+np.save(os.path.join(outdir, "test_acc.npy"), acc)
+np.save(os.path.join(outdir, "test_prec.npy"), prec)
+np.save(os.path.join(outdir, "test_recall.npy"), recall)
+np.save(os.path.join(outdir, "test_auc.npy"), auc)
+np.save(os.path.join(outdir, "test_pr_auc.npy"), pr_auc)
+np.save(os.path.join(outdir, "test_y_pred.npy"), y_pred)
+np.save(os.path.join(outdir, "test_y_true.npy"), y_true)
+np.save(os.path.join(outdir, "test_meta_d.npy"), meta_d)
 ##################################
