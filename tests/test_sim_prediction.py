@@ -1,16 +1,14 @@
 import sys
 import tensorflow as tf
 
-# from datasets import *
 from tensorflow import keras as keras
 
-# from models import *
 import os
 import random
 from glob import glob
 import numpy as np
 
-from pypocketminer.util import load_checkpoint
+from pypocketminer.utils import load_checkpoint
 from pypocketminer.models.mqa_model import MQAModel
 from pypocketminer.datasets import pockets_dataset_fold
 

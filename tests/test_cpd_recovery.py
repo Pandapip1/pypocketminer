@@ -3,18 +3,18 @@ import sys
 # from pypocketminer.datasets import *
 import numpy as np
 import tqdm
-import util
 
 # from pypocketminer.models import *
 import tensorflow as tf
 
 from pypocketminer.models.cpd_model import CPDModel
 from pypocketminer.datasets import cath_dataset, ts50_dataset
+from pypocketminer.utils import load_checkpoint
 
 model = CPDModel(node_features=(8, 100), edge_features=(1, 32), hidden_dim=(16, 100))
 optimizer = tf.keras.optimizers.Adam()
 
-util.load_checkpoint(model, optimizer, sys.argv[1])
+load_checkpoint(model, optimizer, sys.argv[1])
 
 
 if sys.argv[2] == "cath":

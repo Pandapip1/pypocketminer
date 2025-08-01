@@ -3,7 +3,6 @@ import tensorflow as tf
 import sys
 from tensorflow import keras as keras
 import os
-from util import save_checkpoint, load_checkpoint
 import numpy as np
 from datetime import datetime
 
@@ -14,6 +13,7 @@ from pypocketminer.datasets import (
     lookup,
     abbrev,
 )
+from pypocketminer.utils import save_checkpoint, load_checkpoint
 
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "1"
 

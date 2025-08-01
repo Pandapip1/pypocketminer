@@ -6,7 +6,7 @@ from tensorflow import keras as keras
 import os
 import random
 
-from pypocketminer.util import save_checkpoint, load_checkpoint
+from pypocketminer.utils import save_checkpoint, load_checkpoint
 from pypocketminer.multiclass_auc import MulticlassAUC
 from pypocketminer.models.mqa_model import MQAModel
 from pypocketminer.datasets import pockets_dataset_fold

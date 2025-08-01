@@ -2,7 +2,7 @@
 import numpy as np
 import cmd
 
-from pypocketminer import util
+from pypocketminer.utils import cbac
 
 # filepaths
 upperpath = "/home/jonathanb/mount"  # "X:/project"
@@ -137,7 +137,7 @@ def t2mapper(abscale, label_ts_ind, protin):
     cmd.align(aponame, holoname, cycles=0)
 
     # misc graphics settings
-    util.cbac(holoname)
+    cbac(holoname)
     cmd.hide("cartoon", holoname)
 
     # show true labels as lines

@@ -3,7 +3,7 @@ import numpy as np
 import glob
 import mdtraj as md
 
-from pypocketminer.util import load_checkpoint
+from pypocketminer.utils import load_checkpoint
 from pypocketminer.models.mqa_model import MQAModel
 
 # tf.debugging.enable_check_numerics()

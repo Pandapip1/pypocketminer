@@ -3,7 +3,7 @@ import tensorflow as tf
 import sys
 from datetime import datetime
 
-from pypocketminer import util
+from pypocketminer import utils
 from pypocketminer.models.cpd_model import CPDModel
 from pypocketminer.datasets import cath_dataset
 
@@ -38,28 +38,28 @@ def main():
     model_id = int(datetime.timestamp(datetime.now()))
 
     NUM_EPOCHS = 100
-    loop_func = util.loop
+    loop_func = utils.loop
     _best_epoch, best_val = 0, np.inf
 
     for epoch in range(NUM_EPOCHS):
         loss, acc, confusion = loop_func(
             trainset, model, train=True, optimizer=optimizer
         )
-        util.save_checkpoint(model, optimizer, model_id, epoch)
+        utils.save_checkpoint(model, optimizer, model_id, epoch)
         print("EPOCH {} TRAIN {:.4f} {:.4f}".format(epoch, loss, acc))
-        util.save_confusion(confusion)
+        utils.save_confusion(confusion)
         loss, acc, confusion = loop_func(valset, model, train=False)
         if loss < best_val:
             _best_epoch, best_val = epoch, loss
         print("EPOCH {} VAL {:.4f} {:.4f}".format(epoch, loss, acc))
-        util.save_confusion(confusion)
+        utils.save_confusion(confusion)
 
     # Test with best validation loss
-    path = util.models_dir.format(str(model_id).zfill(3), str(epoch).zfill(3))
-    util.load_checkpoint(model, optimizer, path)
+    path = utils.models_dir.format(str(model_id).zfill(3), str(epoch).zfill(3))
+    utils.load_checkpoint(model, optimizer, path)
     loss, acc, confusion = loop_func(testset, model, train=False)
     print("EPOCH TEST {:.4f} {:.4f}".format(loss, acc))
-    util.save_confusion(confusion)
+    utils.save_confusion(confusion)
 
 
 main()

@@ -5,7 +5,7 @@ import tqdm
 from tensorflow import keras as keras
 import os
 
-from pypocketminer.util import save_checkpoint, load_checkpoint
+from pypocketminer.utils import save_checkpoint, load_checkpoint
 from pypocketminer.models.mqa_model import MQAModel
 from pypocketminer.datasets import rocklin_dataset
 
@@ -47,7 +47,7 @@ def main():
         print("EPOCH {} training loss: {}".format(epoch, loss))
         save_checkpoint(model, optimizer, model_id, epoch)
         print("EPOCH {} TRAIN {:.4f}".format(epoch, loss))
-        # util.save_confusion(confusion)
+        # utils.save_confusion(confusion)
         loss = loop_func(valset, model, train=False, val=False)
         print(" EPOCH {} validation loss: {}".format(epoch, loss))
         if loss < best_val:
@@ -55,7 +55,7 @@ def main():
             # we could save it based on precision/auc/recall/etc.
             _best_epoch, best_val = epoch, loss
         print("EPOCH {} VAL {:.4f}".format(epoch, loss))
-        # util.save_confusion(confusion)
+        # utils.save_confusion(confusion)
 
     # Test with best validation loss
     path = models_dir.format(str(model_id).zfill(3), str(epoch).zfill(3))
@@ -64,7 +64,7 @@ def main():
         testset, model, train=False, val=True
     )
     print("EPOCH TEST {:.4f} {:.4f}".format(loss, acc))
-    # util.save_confusion(confusion)
+    # utils.save_confusion(confusion)
     return loss, tp, fp, tn, fn, acc, prec, recall, auc, y_pred, y_true
 
 

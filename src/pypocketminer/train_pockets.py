@@ -11,7 +11,7 @@ from tensorflow import keras as keras
 import os
 import random
 
-from pypocketminer.util import save_checkpoint, load_checkpoint
+from pypocketminer.utils import save_checkpoint, load_checkpoint
 from pypocketminer.models.mqa_model import MQAModel
 from pypocketminer.datasets import pockets_dataset
 
@@ -66,7 +66,7 @@ def main():
         print("EPOCH {} training loss: {}".format(epoch, loss))
         save_checkpoint(model_path, model, optimizer, model_id, epoch)
         print("EPOCH {} TRAIN {:.4f}".format(epoch, loss))
-        # util.save_confusion(confusion)
+        # utils.save_confusion(confusion)
         loss, auc, pr_auc, y_pred, y_true, meta_d = loop_func(
             valset, model, train=False, test=False
         )
@@ -86,7 +86,7 @@ def main():
             # we could save it based on precision/auc/recall/etc.
             best_epoch, best_val = epoch, loss
         print("EPOCH {} VAL {:.4f}".format(epoch, loss))
-        # util.save_confusion(confusion)
+        # utils.save_confusion(confusion)
 
     # Test with best validation loss
     path = model_path.format(str(model_id).zfill(3), str(best_epoch).zfill(3))
@@ -101,7 +101,7 @@ def main():
         loop_func(testset, model, train=False, test=True)
     )
     print("EPOCH TEST {:.4f} {:.4f}".format(loss, acc))
-    # util.save_confusion(confusion)
+    # utils.save_confusion(confusion)
     return loss, tp, fp, tn, fn, acc, prec, recall, auc, pr_auc, y_pred, y_true, meta_d
 
 

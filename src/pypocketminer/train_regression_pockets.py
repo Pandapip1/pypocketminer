@@ -5,7 +5,7 @@ import tensorflow_addons as tfa
 from datetime import datetime
 import os
 
-from pypocketminer.util import save_checkpoint, load_checkpoint
+from pypocketminer.utils import save_checkpoint, load_checkpoint
 from pypocketminer.models.mqa_model import MQAModel
 from pypocketminer.datasets import pockets_dataset
 
@@ -66,7 +66,7 @@ def main():
             # we could save it based on precision/auc/recall/etc.
             best_epoch, best_val = epoch, loss
         print("EPOCH {} VAL {:.4f}".format(epoch, loss))
-        # util.save_confusion(confusion)
+        # utils.save_confusion(confusion)
 
     # Test with best validation loss
     path = model_path.format(str(model_id).zfill(3), str(best_epoch).zfill(3))
@@ -80,7 +80,7 @@ def main():
     loss, r2, y_pred, y_true, meta_d = loop_func(testset, model, train=False, test=True)
     acc = "TODO: IMPLEMENT ACCURACY"
     print("EPOCH TEST {:.4f} {:.4f}".format(loss, acc))
-    # util.save_confusion(confusion)
+    # utils.save_confusion(confusion)
     return loss, r2, y_pred, y_true, meta_d
 
 

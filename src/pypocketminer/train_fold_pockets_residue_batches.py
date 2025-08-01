@@ -9,7 +9,7 @@ import os
 import math
 from glob import glob
 
-from pypocketminer.util import save_checkpoint, load_checkpoint
+from pypocketminer.utils import save_checkpoint, load_checkpoint
 from pypocketminer.models.mqa_model import MQAModel
 from pypocketminer.datasets import (
     determine_global_weights,
