@@ -1,4 +1,8 @@
-from ..utils import merge, split, norm_no_nan
+import tensorflow as tf
+
+from tensorflow.keras.layers import Layer, Dropout, LayerNormalization
+
+from pypocketminer.models.utils import merge, split, norm_no_nan
 
 
 # Dropout that drops vector and scalar channels separately

@@ -1,3 +1,10 @@
+import tensorflow as tf
+
+from tensorflow.keras import Model
+
+from pypocketminer.models.features.positional import PositionalEncodings
+from pypocketminer.models.gvp import GVP
+
 class StructuralFeatures(Model):
     def __init__(
         self,

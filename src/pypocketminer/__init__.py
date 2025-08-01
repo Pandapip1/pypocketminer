@@ -1,11 +1,11 @@
 import tensorflow as tf
-from models import MQAModel
+from pypocketminer.models.mqa_model import MQAModel
 import numpy as np
 from glob import glob
 import mdtraj as md
 import os
 
-from validate_performance_on_xtals import process_strucs, predict_on_xtals
+from pypocketminer.validate_performance_on_xtals import process_strucs, predict_on_xtals
 
 
 def make_predictions(pdb_paths, model, nn_path, debug=False, output_basename=None):

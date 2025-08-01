@@ -8,8 +8,8 @@ import tensorflow as tf
 from tensorflow import keras as keras
 import sys
 
-from datasets import *
-from models import *
+from pypocketminer.datasets import *
+from pypocketminer.models import *
 
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "1"
 

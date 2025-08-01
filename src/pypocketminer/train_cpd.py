@@ -14,11 +14,11 @@ if gpus:
         print(e)
 
 from datetime import datetime
-from datasets import *
+from pypocketminer.datasets import *
 import random
 import tqdm, sys
-import util, pdb
-from models import *
+import pypocketminer.util
+from pypocketminer.models import *
 
 
 def make_model():

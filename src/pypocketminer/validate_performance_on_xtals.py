@@ -1,5 +1,5 @@
-from models import MQAModel
-from util import load_checkpoint
+from pypocketminer.models.mqa_model import MQAModel
+from pypocketminer.util import load_checkpoint
 import tensorflow as tf
 import mdtraj as md
 import numpy as np

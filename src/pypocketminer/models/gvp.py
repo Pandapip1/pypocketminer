@@ -3,7 +3,7 @@ import tqdm
 from tensorflow.keras import Model
 from tensorflow.keras.layers import *
 
-from .utils import merge, split, norm_no_nan
+from pypocketminer.models.utils import merge, split, norm_no_nan
 
 
 class GVP(Model):

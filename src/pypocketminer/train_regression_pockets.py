@@ -2,13 +2,13 @@ import sys
 import tensorflow as tf
 import tensorflow_addons as tfa
 from datetime import datetime
-from datasets import *
+from pypocketminer.datasets import *
 import tqdm, sys
-import util, pdb
+import pypocketminer.util
 from tensorflow import keras as keras
-from models import *
+from pypocketminer.models import *
 import os
-from util import save_checkpoint, load_checkpoint
+from pypocketminer.util import save_checkpoint, load_checkpoint
 import random
 
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "1"

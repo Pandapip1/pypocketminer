@@ -2,13 +2,13 @@ import sys
 import yaml
 import tensorflow as tf
 from datetime import datetime
-from datasets import *
+from pypocketminer.datasets import *
 import tqdm, sys
-import util, pdb
+import pypocketminer.util
 from tensorflow import keras as keras
-from models import *
+from pypocketminer.models import *
 import os
-from util import save_checkpoint, load_checkpoint
+from pypocketminer.util import save_checkpoint, load_checkpoint
 import random
 import math
 from glob import glob

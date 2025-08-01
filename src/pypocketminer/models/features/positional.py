@@ -1,3 +1,8 @@
+import tensorflow as tf
+
+from tensorflow.keras import Model
+
+
 class PositionalEncodings(Model):
     def __init__(self, num_embeddings, period_range=[2, 1000]):
         super(PositionalEncodings, self).__init__()

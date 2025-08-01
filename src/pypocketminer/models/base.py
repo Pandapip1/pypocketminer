@@ -1,3 +1,6 @@
+from tensorflow.keras import Model
+
+
 class Encoder(Model):
     def __init__(self, node_features, edge_features, num_layers=3, dropout=0.1):
         super(Encoder, self).__init__()

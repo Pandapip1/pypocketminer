@@ -1,3 +1,6 @@
+import tensorflow as tf
+
+
 def norm_no_nan(x, axis=-1, keepdims=False, eps=1e-8, sqrt=True):
     out = tf.maximum(tf.math.reduce_sum(tf.math.square(x), axis, keepdims), eps)
     return tf.sqrt(out) if sqrt else out

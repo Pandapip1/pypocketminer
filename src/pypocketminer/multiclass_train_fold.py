@@ -1,14 +1,14 @@
 import sys
 import tensorflow as tf
 from datetime import datetime
-from datasets import *
+from pypocketminer.datasets import *
 import tqdm, sys
-import util
+import pypocketminer.util
 from tensorflow import keras as keras
-from models import *
+from pypocketminer.models import *
 import os
-from util import save_checkpoint, load_checkpoint
-from multiclass_auc import MulticlassAUC
+from pypocketminer.util import save_checkpoint, load_checkpoint
+from pypocketminer.multiclass_auc import MulticlassAUC
 import random
 
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "1"

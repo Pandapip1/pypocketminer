@@ -1,3 +1,6 @@
+from tensorflow.keras import Model
+
+
 class CPDModel(Model):
     def __init__(
         self,
