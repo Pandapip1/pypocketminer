@@ -4,6 +4,7 @@ from tensorflow.keras import Model
 from tensorflow.keras.layers import Sequential
 
 from pypocketminer.models.layers.gvp import GVPLayerNorm, GVPDropout
+from pypocketminer.models.gvp import GVP
 
 
 class MPNNLayer(Model):

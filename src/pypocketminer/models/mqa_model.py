@@ -1,4 +1,11 @@
-from tensorflow.keras import Model
+import tensorflow as tf
+
+from tensorflow.keras import Model, Sequential
+from tensorflow.keras.layers import Dense, Embedding, Dropout, LayerNormalization
+
+from pypocketminer.models.base import Encoder
+from pypocketminer.models.gvp import GVP
+from pypocketminer.models.features.structural import StructuralFeatures
 
 
 class MQAModel(Model):

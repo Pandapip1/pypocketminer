@@ -1,18 +1,14 @@
 from models import MQAModel
-from util import load_checkpoint
-import tensorflow as tf
-import mdtraj as md
 import numpy as np
 import os
 from glob import glob
 from tensorflow import keras as keras
 from tqdm import tqdm
-from validate_performance_on_xtals import (
-    process_strucs,
+from pypocketminer.validate_performance_on_xtals import (
     process_paths,
     predict_on_xtals,
 )
-from optimal_threshold_protein_performance import (
+from pypocketminer.optimal_threshold_protein_performance import (
     determine_optimal_threshold,
     determine_recall_or_sensitivity,
 )

@@ -1,4 +1,11 @@
+import tensorflow as tf
+import numpy as np
+import tqdm
+
 from tensorflow.keras import Model
+
+
+from pypocketminer.models.layers.mpnn_layer import MPNNLayer
 
 
 class Encoder(Model):

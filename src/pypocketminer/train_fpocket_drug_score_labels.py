@@ -1,17 +1,17 @@
+import mdtraj as md
+import numpy as np
 import sys
 import yaml
 import tensorflow as tf
 from datetime import datetime
-from pypocketminer.datasets import *
-import tqdm, sys
-import pypocketminer.util
 from tensorflow import keras as keras
-from pypocketminer.models import *
 import os
-from pypocketminer.util import save_checkpoint, load_checkpoint
-import random
 import math
 from glob import glob
+
+
+from pypocketminer.models.mqa_model import MQAModel
+from pypocketminer.util import save_checkpoint, load_checkpoint
 
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "1"
 

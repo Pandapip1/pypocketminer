@@ -1,10 +1,7 @@
 import tensorflow as tf
 import numpy as np
 import mdtraj as md
-import pandas as pd
-import glob
 import os
-import time
 
 abbrev = {
     "ALA": "A",

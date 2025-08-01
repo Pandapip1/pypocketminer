@@ -1,6 +1,7 @@
+import numpy as np
+
 import os
 
-import threading
 import random
 import mlflow
 import optuna
@@ -8,8 +9,7 @@ import tensorflow as tf
 from tensorflow import keras as keras
 import sys
 
-from pypocketminer.datasets import *
-from pypocketminer.models import *
+from pypocketminer.models.mqa_model import MQAModel
 
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "1"
 

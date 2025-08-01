@@ -1,8 +1,6 @@
 import tensorflow as tf
 import numpy as np
 import tqdm
-import scipy.stats
-from pypocketminer.collections import defaultdict
 
 # models_dir = '../models/{}_{}'
 

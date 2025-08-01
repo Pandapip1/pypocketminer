@@ -1,9 +1,11 @@
 import tensorflow as tf
 
 from tensorflow.keras import Model
+from tensorflow.keras.layers import LayerNormalization
 
 from pypocketminer.models.features.positional import PositionalEncodings
 from pypocketminer.models.gvp import GVP
+
 
 class StructuralFeatures(Model):
     def __init__(

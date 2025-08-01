@@ -1,3 +1,4 @@
+import numpy as np
 import tensorflow as tf
 
 # tf.debugging.enable_check_numerics()
@@ -14,13 +15,12 @@ if gpus:
         print(e)
 
 from datetime import datetime
-from pypocketminer.datasets import *
-import tqdm, sys
-import pypocketminer.util
+import tqdm
 from tensorflow import keras as keras
-from pypocketminer.models import *
 import os
+
 from pypocketminer.util import save_checkpoint, load_checkpoint
+from pypocketminer.models.mqa_model import MQAModel
 
 models_dir = "../models/{}_{}"
 

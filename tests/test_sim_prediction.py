@@ -1,15 +1,15 @@
 import sys
 import tensorflow as tf
-from datetime import datetime
-from datasets import *
-import tqdm, sys
-import util
+# from datasets import *
 from tensorflow import keras as keras
-from models import *
+# from models import *
 import os
-from util import save_checkpoint, load_checkpoint
 import random
 from glob import glob
+import numpy as np
+
+from pypocketminer.util import load_checkpoint
+from pypocketminer.models.mqa_model import MQAModel
 
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "1"
 

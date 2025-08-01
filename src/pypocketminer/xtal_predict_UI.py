@@ -1,10 +1,8 @@
-import tensorflow as tf
 from models import MQAModel
 
 from pypocketminer.validate_performance_on_xtals import process_strucs, predict_on_xtals
 import sys, os
 import mdtraj as md
-from glob import glob
 import numpy as np
 
 

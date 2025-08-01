@@ -1,4 +1,8 @@
+import numpy as np
 import tensorflow as tf
+import sys
+
+from pypocketminer.models.cpd_model import CPDModel
 
 # tf.debugging.enable_check_numerics()
 gpus = tf.config.experimental.list_physical_devices("GPU")
@@ -14,11 +18,10 @@ if gpus:
         print(e)
 
 from datetime import datetime
-from pypocketminer.datasets import *
-import random
-import tqdm, sys
-import pypocketminer.util
-from pypocketminer.models import *
+
+from pypocketminer import util
+# from pypocketminer.datasets import *
+# from pypocketminer.models import *
 
 
 def make_model():

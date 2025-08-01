@@ -1,5 +1,8 @@
 # IMPORTS
 import numpy as np
+import cmd
+
+from pypocketminer import util
 
 # filepaths
 upperpath = "/home/jonathanb/mount"  # "X:/project"
@@ -7,6 +10,7 @@ structurepath = (
     f"{upperpath}/bowmanlab/borowsky.jonathan/FAST-cs/pocket-tracking/all-structures"
 )
 valapopath = f"{upperpath}/bowmanlab/borowsky.jonathan/FAST-cs/protein-sets/new_pockets/labels/validation_apo_ids_all.npy"
+val_apo_path = valapopath
 truelabelpath = f"{upperpath}/bowmanlab/borowsky.jonathan/FAST-cs/protein-sets"
 predlabelpath = f"{upperpath}/bowmanlab/ameller/gvp/task2"
 

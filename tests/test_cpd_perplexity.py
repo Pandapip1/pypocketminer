@@ -1,10 +1,11 @@
+import tensorflow as tf
 import sys
-from datetime import datetime
-from datasets import *
-import random, sys
+# from datasets import *
 import numpy as np
-import tqdm, util
-from models import *
+import util
+# from models import *
+
+from pypocketminer.models.cpd_model import CPDModel
 
 model = CPDModel(node_features=(8, 100), edge_features=(1, 32), hidden_dim=(16, 100))
 optimizer = tf.keras.optimizers.Adam()

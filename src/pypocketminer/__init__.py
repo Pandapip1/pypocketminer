@@ -1,7 +1,5 @@
-import tensorflow as tf
 from pypocketminer.models.mqa_model import MQAModel
 import numpy as np
-from glob import glob
 import mdtraj as md
 import os
 

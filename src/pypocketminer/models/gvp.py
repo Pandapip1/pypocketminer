@@ -1,7 +1,7 @@
 import tensorflow as tf
-import tqdm
 from tensorflow.keras import Model
-from tensorflow.keras.layers import *
+
+from tensorflow.keras.layers import Dense
 
 from pypocketminer.models.utils import merge, split, norm_no_nan
 

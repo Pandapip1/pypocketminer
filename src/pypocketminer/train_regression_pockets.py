@@ -1,15 +1,12 @@
+import numpy as np
 import sys
 import tensorflow as tf
 import tensorflow_addons as tfa
 from datetime import datetime
-from pypocketminer.datasets import *
-import tqdm, sys
-import pypocketminer.util
-from tensorflow import keras as keras
-from pypocketminer.models import *
 import os
+
 from pypocketminer.util import save_checkpoint, load_checkpoint
-import random
+from pypocketminer.models.mqa_model import MQAModel
 
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "1"
 
