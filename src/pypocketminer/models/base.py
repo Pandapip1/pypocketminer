@@ -6,7 +6,7 @@ from tensorflow.keras import Model
 
 
 from pypocketminer.models.layers.mpnn_layer import MPNNLayer
-from pypocketminer.utils import gather_nodes, cat_neighbors_nodes, autoregressive_mask
+from pypocketminer.models.utils import gather_nodes, cat_neighbors_nodes, autoregressive_mask
 
 
 class Encoder(Model):
