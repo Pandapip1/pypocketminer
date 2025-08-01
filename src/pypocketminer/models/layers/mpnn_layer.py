@@ -1,7 +1,6 @@
 import tensorflow as tf
 
-from tensorflow.keras import Model
-from tensorflow.keras.layers import Sequential
+from tensorflow.keras import Model, Sequential
 
 from pypocketminer.models.layers.gvp import GVPLayerNorm, GVPDropout
 from pypocketminer.models.gvp import GVP
