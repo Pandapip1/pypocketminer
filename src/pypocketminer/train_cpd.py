@@ -42,7 +42,7 @@ def main():
 
     NUM_EPOCHS = 100
     loop_func = util.loop
-    best_epoch, best_val = 0, np.inf
+    _best_epoch, best_val = 0, np.inf
 
     for epoch in range(NUM_EPOCHS):
         loss, acc, confusion = loop_func(
@@ -53,7 +53,7 @@ def main():
         util.save_confusion(confusion)
         loss, acc, confusion = loop_func(valset, model, train=False)
         if loss < best_val:
-            best_epoch, best_val = epoch, loss
+            _best_epoch, best_val = epoch, loss
         print("EPOCH {} VAL {:.4f} {:.4f}".format(epoch, loss, acc))
         util.save_confusion(confusion)
 

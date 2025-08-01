@@ -35,7 +35,7 @@ def main():
     model = make_model()
 
     loop_func = loop
-    best_epoch, best_val, best_auc = 0, np.inf, np.inf
+    best_epoch, _best_val, _best_auc = 0, np.inf, np.inf
 
     # Determine which network to use (i.e. epoch with best AUC)
     aucs = []
@@ -78,7 +78,7 @@ def loop(dataset, model, train=False, optimizer=None, alpha=1, test=False):
         pr_auc_metric.reset_states()
 
     losses = []
-    y_pred, y_true, meta_d, targets = [], [], [], []
+    y_pred, y_true, meta_d, _targets = [], [], [], []
     batch_num = 0
     # for batch in tqdm.tqdm(dataset):
     for batch in dataset:

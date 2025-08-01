@@ -87,7 +87,7 @@ def loop(dataset, model, train=False, optimizer=None, alpha=1, test=False):
         r2_metric.reset_states()
 
     losses = []
-    y_pred, y_true, meta_d, targets = [], [], [], []
+    y_pred, y_true, meta_d, _targets = [], [], [], []
 
     # for batch in tqdm.tqdm(dataset):
     for batch in dataset:

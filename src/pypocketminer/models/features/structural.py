@@ -82,7 +82,7 @@ class StructuralFeatures(Model):
         # subtract C-alpha positions from t positions
         dX = X_neighbors - tf.expand_dims(ca, -2)
         # normalize to unit vector
-        dx = normalize(dX)
+        dX = normalize(dX)
         return dX
 
     def _rbf(self, D):

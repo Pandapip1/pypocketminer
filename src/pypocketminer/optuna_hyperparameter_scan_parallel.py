@@ -52,7 +52,7 @@ def main_cv(learning_rate, dropout_rate, num_layers, hidden_layers, cv_fold):
     )
 
     loop_func = loop
-    best_epoch, best_val = 0, np.inf
+    _best_epoch, best_val = 0, np.inf
     val_losses = []
 
     # Maintain ROC AUC, PR AUC metrics throughout training
@@ -70,7 +70,7 @@ def main_cv(learning_rate, dropout_rate, num_layers, hidden_layers, cv_fold):
             "CV FOLD {} EPOCH {} validation loss: {:.4f}".format(cv_fold, epoch, loss)
         )
         if loss < best_val:
-            best_epoch, best_val = epoch, loss
+            _best_epoch, best_val = epoch, loss
 
         # Save out validation metrics for each epoch
         auc_metric.update_state(y_true, y_pred)
@@ -146,7 +146,7 @@ def main_cv(learning_rate, dropout_rate, num_layers, hidden_layers, cv_fold):
 def loop(dataset, model, train=False, optimizer=None, alpha=1, val=False):
 
     losses = []
-    y_pred, y_true, meta_d, targets = [], [], [], []
+    y_pred, y_true, meta_d, _targets = [], [], [], []
     batch_num = 0
     # for batch in tqdm.tqdm(dataset):
     for batch in dataset:

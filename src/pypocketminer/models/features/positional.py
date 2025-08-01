@@ -12,9 +12,9 @@ class PositionalEncodings(Model):
 
     def call(self, E_idx):
         # i-j
-        N_batch = tf.shape(E_idx)[0]
+        # N_batch = tf.shape(E_idx)[0]
         N_nodes = tf.shape(E_idx)[1]
-        N_neighbors = tf.shape(E_idx)[2]
+        # N_neighbors = tf.shape(E_idx)[2]
         ii = tf.reshape(tf.cast(tf.range(N_nodes), tf.float32), (1, -1, 1))
         d = tf.expand_dims((tf.cast(E_idx, tf.float32) - ii), -1)
         # Original Transformer frequencies

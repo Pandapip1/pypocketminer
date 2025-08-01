@@ -231,7 +231,7 @@ def assess_performance(predictions, mask, xtal_set_path, test=False):
         label_dictionary = {e[0][0].upper(): e[5] for e in all_labels[0]}
 
         apo_ids = np.load(xtal_set_path)
-        upper_apo_ids = [e.upper() for e in apo_ids]
+        # upper_apo_ids = [e.upper() for e in apo_ids]
         true_labels = [label_dictionary[e[:-1].upper()] for e in apo_ids]
 
         protein_aucs = [

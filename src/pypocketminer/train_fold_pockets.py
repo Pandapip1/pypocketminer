@@ -144,7 +144,7 @@ def loop(
         pr_auc_metric.reset_states()
 
     losses = []
-    y_pred, y_true, meta_d, targets = [], [], [], []
+    y_pred, y_true, meta_d, _targets = [], [], [], []
     batch_num = 0
 
     # for batch in tqdm.tqdm(dataset):

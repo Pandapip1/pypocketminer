@@ -55,7 +55,7 @@ def main_cv(learning_rate, dropout_rate, num_layers, hidden_layers):
     )
 
     loop_func = loop
-    best_epoch, best_val, best_auc = 0, np.inf, np.inf
+    _best_epoch, best_val, best_auc = 0, np.inf, np.inf
     val_losses = []
 
     # Maintain ROC AUC, PR AUC metrics throughout training
@@ -80,7 +80,7 @@ def main_cv(learning_rate, dropout_rate, num_layers, hidden_layers):
 
         current_auc = auc_metric.result().numpy()
         if current_auc < best_auc:
-            best_epoch, best_auc = epoch, current_auc
+            _best_epoch, best_auc = epoch, current_auc
 
         np.save(
             os.path.join(
@@ -152,7 +152,7 @@ def main_cv(learning_rate, dropout_rate, num_layers, hidden_layers):
 def loop(dataset, model, train=False, optimizer=None, alpha=1, val=False):
 
     losses = []
-    y_pred, y_true, meta_d, targets = [], [], [], []
+    y_pred, y_true, meta_d, _targets = [], [], [], []
     batch_num = 0
     # for batch in tqdm.tqdm(dataset):
     for batch in dataset:

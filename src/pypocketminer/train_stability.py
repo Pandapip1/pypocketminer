@@ -40,7 +40,7 @@ def main():
 
     NUM_EPOCHS = 50
     loop_func = loop
-    best_epoch, best_val = 0, np.inf
+    _best_epoch, best_val = 0, np.inf
 
     for epoch in range(NUM_EPOCHS):
         loss = loop_func(trainset, model, train=True, optimizer=optimizer)
@@ -53,7 +53,7 @@ def main():
         if loss < best_val:
             # Could play with this parameter here. Instead of saving best NN based on loss
             # we could save it based on precision/auc/recall/etc.
-            best_epoch, best_val = epoch, loss
+            _best_epoch, best_val = epoch, loss
         print("EPOCH {} VAL {:.4f}".format(epoch, loss))
         # util.save_confusion(confusion)
 
@@ -92,7 +92,7 @@ def loop(dataset, model, train=False, optimizer=None, alpha=1, val=False):
         auc_metric.reset_states()
 
     losses = []
-    y_pred, y_true, targets = [], [], []
+    y_pred, y_true, _targets = [], [], []
     batch_num = 0
     for batch in tqdm.tqdm(dataset):
         X, S, y, M = batch
