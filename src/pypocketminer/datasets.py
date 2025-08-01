@@ -196,23 +196,23 @@ def parse_batch(batch, use_tensors=True, y_type="int32", use_lm=False):
         pdbs.append(prot_bb)
 
     B = len(batch)
-    L_max = np.max([pdb.top.n_residues for pdb in pdbs])
+    n_residues_max = np.max([pdb.top.n_residues for pdb in pdbs])
     if use_tensors:
         # precomputed tensors include terminal sidechain atom
-        X = np.zeros([B, L_max, 5, 3], dtype=np.float32)
+        X = np.zeros([B, n_residues_max, 5, 3], dtype=np.float32)
     else:
-        X = np.zeros([B, L_max, 4, 3], dtype=np.float32)
+        X = np.zeros([B, n_residues_max, 4, 3], dtype=np.float32)
 
     if use_lm:
-        S = np.zeros([B, L_max, 1280], dtype=np.float32)
+        S = np.zeros([B, n_residues_max, 1280], dtype=np.float32)
     else:
-        S = np.zeros([B, L_max], dtype=np.int32)
+        S = np.zeros([B, n_residues_max], dtype=np.int32)
 
     # -1 so we can distinguish 0 pocket volume and padded indices later
     if y_type == "int32":
-        y = np.zeros([B, L_max], dtype=np.int32) - 1
+        y = np.zeros([B, n_residues_max], dtype=np.int32) - 1
     elif y_type == "float32":
-        y = np.zeros([B, L_max], dtype=np.float32) - 1
+        y = np.zeros([B, n_residues_max], dtype=np.float32) - 1
 
     meta = []
     for i, ex in enumerate(batch):
@@ -221,7 +221,7 @@ def parse_batch(batch, use_tensors=True, y_type="int32", use_lm=False):
         traj_iis = int(traj_iis)
 
         pdb = pdbs[i]
-        l = pdb.top.n_residues
+        n_residues = pdb.top.n_residues
 
         if use_tensors:
             fn = (
@@ -241,22 +241,22 @@ def parse_batch(batch, use_tensors=True, y_type="int32", use_lm=False):
                 "protein and (name N or name CA or name C or name O)"
             )
             prot_bb = struc.atom_slice(prot_iis)
-            xyz = prot_bb.xyz.reshape(l, 4, 3)
+            xyz = prot_bb.xyz.reshape(n_residues, 4, 3)
 
         if use_lm:
             fn = "S_embedding_" + os.path.basename(pdb_fn).split(".")[0] + ".npy"
             S_path = (
                 f"/project/bowmanlab/mdward/projects/FAST-pocket-pred/precompute_S/{fn}"
             )
-            S[i, :l] = np.load(S_path)
+            S[i, :n_residues] = np.load(S_path)
         else:
             seq = [r.name for r in pdb.top.residues]
-            S[i, :l] = np.asarray([lookup[abbrev[a]] for a in seq], dtype=np.int32)
+            S[i, :n_residues] = np.asarray([lookup[abbrev[a]] for a in seq], dtype=np.int32)
 
         X[i] = np.pad(
-            xyz, [[0, L_max - l], [0, 0], [0, 0]], "constant", constant_values=(np.nan,)
+            xyz, [[0, n_residues_max - n_residues], [0, 0], [0, 0]], "constant", constant_values=(np.nan,)
         )
-        y[i, :l] = targs
+        y[i, :n_residues] = targs
         meta.append(x)
 
     isnan = np.isnan(X)

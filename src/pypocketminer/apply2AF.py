@@ -1,4 +1,10 @@
 import tensorflow as tf
+import numpy as np
+import glob
+import mdtraj as md
+
+from pypocketminer.util import load_checkpoint
+from pypocketminer.models.mqa_model import MQAModel
 
 # tf.debugging.enable_check_numerics()
 gpus = tf.config.experimental.list_physical_devices("GPU")
@@ -12,12 +18,6 @@ if gpus:
     except RuntimeError as e:
         # Memory growth must be set before GPUs have been initialized
         print(e)
-
-import numpy as np
-import glob
-import mdtraj as md
-from pypocketminer.util import load_checkpoint
-from pypocketminer.models.mqa_model import MQAModel
 
 abbrev = {
     "ALA": "A",
@@ -80,14 +80,15 @@ def process_struc(strucs):
     X = np.zeros([B, L_max, 4, 3], dtype=np.float32)
     S = np.zeros([B, L_max], dtype=np.int32)
 
+    n_residues = prot_bb.top.n_residues
+
     for i, prot_bb in enumerate(pdbs):
-        l = prot_bb.top.n_residues
         xyz = prot_bb.xyz.reshape(l, 4, 3)
 
         seq = [r.name for r in prot_bb.top.residues]
-        S[i, :l] = np.asarray([lookup[abbrev[a]] for a in seq], dtype=np.int32)
+        S[i, :n_residues] = np.asarray([lookup[abbrev[a]] for a in seq], dtype=np.int32)
         X[i] = np.pad(
-            xyz, [[0, L_max - l], [0, 0], [0, 0]], "constant", constant_values=(np.nan,)
+            xyz, [[0, L_max - n_residues], [0, 0], [0, 0]], "constant", constant_values=(np.nan,)
         )
 
     isnan = np.isnan(X)

@@ -1,5 +1,12 @@
 import numpy as np
 import tensorflow as tf
+from datetime import datetime
+import tqdm
+from tensorflow import keras as keras
+import os
+
+from pypocketminer.util import save_checkpoint, load_checkpoint
+from pypocketminer.models.mqa_model import MQAModel
 
 # tf.debugging.enable_check_numerics()
 gpus = tf.config.experimental.list_physical_devices("GPU")
@@ -13,14 +20,6 @@ if gpus:
     except RuntimeError as e:
         # Memory growth must be set before GPUs have been initialized
         print(e)
-
-from datetime import datetime
-import tqdm
-from tensorflow import keras as keras
-import os
-
-from pypocketminer.util import save_checkpoint, load_checkpoint
-from pypocketminer.models.mqa_model import MQAModel
 
 models_dir = "../models/{}_{}"
 

@@ -7,6 +7,7 @@ import os
 
 from pypocketminer.util import save_checkpoint, load_checkpoint
 from pypocketminer.models.mqa_model import MQAModel
+from pypocketminer.datasets import pockets_dataset
 
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "1"
 
@@ -77,6 +78,7 @@ def main():
     load_checkpoint(model, optimizer, path)
 
     loss, r2, y_pred, y_true, meta_d = loop_func(testset, model, train=False, test=True)
+    acc = "TODO: IMPLEMENT ACCURACY"
     print("EPOCH TEST {:.4f} {:.4f}".format(loss, acc))
     # util.save_confusion(confusion)
     return loss, r2, y_pred, y_true, meta_d

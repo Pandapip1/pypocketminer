@@ -9,6 +9,7 @@ import tensorflow as tf
 from tensorflow import keras as keras
 
 from pypocketminer.models.mqa_model import MQAModel
+from pypocketminer.dataset import pockets_dataset
 
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "1"
 

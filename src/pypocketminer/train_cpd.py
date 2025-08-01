@@ -1,7 +1,9 @@
 import numpy as np
 import tensorflow as tf
 import sys
+from datetime import datetime
 
+from pypocketminer import util
 from pypocketminer.models.cpd_model import CPDModel
 
 # tf.debugging.enable_check_numerics()
@@ -16,13 +18,6 @@ if gpus:
     except RuntimeError as e:
         # Memory growth must be set before GPUs have been initialized
         print(e)
-
-from datetime import datetime
-
-from pypocketminer import util
-# from pypocketminer.datasets import *
-# from pypocketminer.models import *
-
 
 def make_model():
     model = CPDModel(

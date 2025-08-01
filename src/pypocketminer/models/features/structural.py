@@ -5,6 +5,7 @@ from tensorflow.keras.layers import LayerNormalization
 
 from pypocketminer.models.features.positional import PositionalEncodings
 from pypocketminer.models.gvp import GVP
+from pypocketminer.utils import gather_nodes, gather_edges, normalize, merge
 
 
 class StructuralFeatures(Model):

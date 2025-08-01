@@ -9,6 +9,7 @@ import random
 from pypocketminer.util import save_checkpoint, load_checkpoint
 from pypocketminer.multiclass_auc import MulticlassAUC
 from pypocketminer.models.mqa_model import MQAModel
+from pypocketminer.datasets import pockets_dataset_fold
 
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "1"
 
