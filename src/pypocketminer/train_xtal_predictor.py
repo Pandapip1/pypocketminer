@@ -237,7 +237,7 @@ def main():
     predictions, mask = predict_on_xtals(
         model, xtal_test_path, test=True, use_tensors=use_tensors, use_lm=use_lm
     )
-    np.save(os.path.join(outdir, f"test_predictions.npy"), predictions)
+    np.save(os.path.join(outdir, "test_predictions.npy"), predictions)
 
     (
         loss,

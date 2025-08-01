@@ -253,7 +253,7 @@ def choose_balanced_inds(y):
 def mlflow_callback(study, trial):
     "Saves the parameters for each optuna run, along with the best loss for each"
     trial_value = trial.value if trial.value is not None else float("nan")
-    with mlflow.start_run(run_name=f"optuna_CV"):
+    with mlflow.start_run(run_name="optuna_CV"):
         mlflow.log_params(trial.params)
         mlflow.log_metrics({"loss": trial_value})
 

@@ -21,12 +21,12 @@ binthresh = 0.5
 # list of training schemes/network versions
 label_trainschemes = [
     "train-with-4-residue-batches-constant-size-balanced-640-resi-draws-intermediates-in-training/net_8-50_1-32_16-100_dr_0.1_nl_4_hd_100_lr_2e-05_b4resis_b4proteins_30epoch_feat_method_nearby-pv-procedure_rank_7_stride_1_window_40_pos_87",
-    f"train-with-1-protein-batches-no-balancing-intermediates-in-training/net_8-50_1-32_16-100_dr_0.1_nl_4_hd_100_lr_2e-05_b1proteins_30epoch_feat_method_nearby-pv-procedure_rank_7_stride_1_window_40_pos_87",
-    f"train-with-1-protein-batches-no-balancing-intermediates-in-training/net_8-50_1-32_16-100_dr_0.1_nl_4_hd_100_lr_2e-05_b1proteins_30epoch_feat_method_nearby-pv-procedure_rank_7_stride_1_window_40_pos_116",
-    f"train-with-1-protein-batches-no-balancing-intermediates-in-training/net_8-50_1-32_16-100_dr_0.1_nl_4_hd_100_lr_2e-05_b1proteins_30epoch_feat_method_nearby-pv-procedure_rank_7_stride_1_window_40_pos_145",
-    f"train-with-1-protein-batches-undersample-intermediates-in-training/net_8-50_1-32_16-100_dr_0.1_nl_4_hd_100_lr_2e-05_b1proteins_30epoch_feat_method_nearby-pv-procedure_rank_7_stride_1_window_40_pos_87",
-    f"train-with-1-protein-batches-undersample-intermediates-in-training/net_8-50_1-32_16-100_dr_0.1_nl_4_hd_100_lr_2e-05_b1proteins_30epoch_feat_method_nearby-pv-procedure_rank_7_stride_1_window_40_pos_116",
-    f"train-with-1-protein-batches-undersample-intermediates-in-training/net_8-50_1-32_16-100_dr_0.1_nl_4_hd_100_lr_2e-05_b1proteins_30epoch_feat_method_nearby-pv-procedure_rank_7_stride_1_window_40_pos_145",
+    "train-with-1-protein-batches-no-balancing-intermediates-in-training/net_8-50_1-32_16-100_dr_0.1_nl_4_hd_100_lr_2e-05_b1proteins_30epoch_feat_method_nearby-pv-procedure_rank_7_stride_1_window_40_pos_87",
+    "train-with-1-protein-batches-no-balancing-intermediates-in-training/net_8-50_1-32_16-100_dr_0.1_nl_4_hd_100_lr_2e-05_b1proteins_30epoch_feat_method_nearby-pv-procedure_rank_7_stride_1_window_40_pos_116",
+    "train-with-1-protein-batches-no-balancing-intermediates-in-training/net_8-50_1-32_16-100_dr_0.1_nl_4_hd_100_lr_2e-05_b1proteins_30epoch_feat_method_nearby-pv-procedure_rank_7_stride_1_window_40_pos_145",
+    "train-with-1-protein-batches-undersample-intermediates-in-training/net_8-50_1-32_16-100_dr_0.1_nl_4_hd_100_lr_2e-05_b1proteins_30epoch_feat_method_nearby-pv-procedure_rank_7_stride_1_window_40_pos_87",
+    "train-with-1-protein-batches-undersample-intermediates-in-training/net_8-50_1-32_16-100_dr_0.1_nl_4_hd_100_lr_2e-05_b1proteins_30epoch_feat_method_nearby-pv-procedure_rank_7_stride_1_window_40_pos_116",
+    "train-with-1-protein-batches-undersample-intermediates-in-training/net_8-50_1-32_16-100_dr_0.1_nl_4_hd_100_lr_2e-05_b1proteins_30epoch_feat_method_nearby-pv-procedure_rank_7_stride_1_window_40_pos_145",
 ]
 
 # global load commands

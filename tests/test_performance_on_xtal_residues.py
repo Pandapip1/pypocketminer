@@ -4,6 +4,7 @@ import os
 from glob import glob
 from tensorflow import keras as keras
 from tqdm import tqdm
+
 from pypocketminer.validate_performance_on_xtals import (
     process_paths,
     predict_on_xtals,
@@ -12,6 +13,8 @@ from pypocketminer.optimal_threshold_protein_performance import (
     determine_optimal_threshold,
     determine_recall_or_sensitivity,
 )
+
+S_test_lm = "Something that seemingly doesn't exist"
 
 if __name__ == "__main__":
     val_label_dictionary = np.load(

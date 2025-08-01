@@ -171,7 +171,7 @@ def main():
     load_checkpoint(model, optimizer, path)
 
     predictions, mask = predict_on_xtals(model, xtal_test_path, test=True)
-    np.save(os.path.join(outdir, f"test_predictions.npy"), predictions)
+    np.save(os.path.join(outdir, "test_predictions.npy"), predictions)
 
     (
         loss,

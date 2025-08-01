@@ -11,6 +11,7 @@ from glob import glob
 
 from pypocketminer.util import save_checkpoint, load_checkpoint
 from pypocketminer.models.mqa_model import MQAModel
+from pypocketminer.datasets import simulation_dataset, determine_global_weights
 
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "1"
 
@@ -86,8 +87,8 @@ def main():
         BATCH_SIZE, FILESTEM, use_tensors=use_tensors
     )  # batch size = N proteins
 
-    # if weight_globally:
-    #     positive_weight, negative_weight = determine_global_weights(FILESTEM, 1, 1)
+    if weight_globally:
+        positive_weight, negative_weight = determine_global_weights(FILESTEM, 1, 1)
 
     # Set optimizer and make model
     optimizer = tf.keras.optimizers.Adam(learning_rate=LEARNING_RATE)
@@ -178,7 +179,7 @@ def main():
     load_checkpoint(model, optimizer, path)
 
     predictions, mask = predict_on_xtals(model, xtal_test_path, test=True)
-    np.save(os.path.join(outdir, f"test_predictions.npy"), predictions)
+    np.save(os.path.join(outdir, "test_predictions.npy"), predictions)
 
     (
         loss,
@@ -912,7 +913,7 @@ print(outdir)
 
 os.makedirs(outdir, exist_ok=True)
 model_path = outdir + "{}_{}"
-FILESTEM = f"cryptic-residues-buried-only"
+FILESTEM = "cryptic-residues-buried-only"
 
 #### GPU INFO ####
 # tf.debugging.enable_check_numerics()

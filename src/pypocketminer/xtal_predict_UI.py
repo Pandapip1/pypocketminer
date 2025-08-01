@@ -1,7 +1,8 @@
 from models import MQAModel
 
 from pypocketminer.validate_performance_on_xtals import process_strucs, predict_on_xtals
-import sys, os
+import sys
+import os
 import mdtraj as md
 import numpy as np
 

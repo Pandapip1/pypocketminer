@@ -10,6 +10,7 @@ import numpy as np
 
 from pypocketminer.util import load_checkpoint
 from pypocketminer.models.mqa_model import MQAModel
+from pypocketminer.datasets import pockets_dataset_fold
 
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "1"
 
