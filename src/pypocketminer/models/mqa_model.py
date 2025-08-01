@@ -6,6 +6,7 @@ from tensorflow.keras.layers import Dense, Embedding, Dropout, LayerNormalizatio
 from pypocketminer.models.base import Encoder
 from pypocketminer.models.gvp import GVP
 from pypocketminer.models.features.structural import StructuralFeatures
+from pypocketminer.models.utils import vs_concat
 
 
 class MQAModel(Model):

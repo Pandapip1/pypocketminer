@@ -5,6 +5,7 @@ from pypocketminer.models.gvp import GVP
 from pypocketminer.models.features.structural import StructuralFeatures
 from pypocketminer.models.base import Encoder, Decoder
 
+
 class CPDModel(Model):
     def __init__(
         self,

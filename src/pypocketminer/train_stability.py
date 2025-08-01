@@ -7,6 +7,7 @@ import os
 
 from pypocketminer.util import save_checkpoint, load_checkpoint
 from pypocketminer.models.mqa_model import MQAModel
+from pypocketminer.datasets import rocklin_dataset
 
 # tf.debugging.enable_check_numerics()
 gpus = tf.config.experimental.list_physical_devices("GPU")

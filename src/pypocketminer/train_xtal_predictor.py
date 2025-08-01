@@ -11,7 +11,12 @@ from glob import glob
 
 from pypocketminer.util import save_checkpoint, load_checkpoint
 from pypocketminer.models.mqa_model import MQAModel
-from pypocketminer.datasets import abbrev, determine_global_weights, simulation_dataset
+from pypocketminer.datasets import (
+    abbrev,
+    determine_global_weights,
+    simulation_dataset,
+    lookup,
+)
 
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "1"
 

@@ -3,8 +3,10 @@ import numpy as np
 import sys
 import tensorflow as tf
 from datetime import datetime
+
 # from pypocketminer.datasets import *
 from tensorflow import keras as keras
+
 # from models import *
 import os
 import random

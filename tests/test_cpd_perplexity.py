@@ -1,8 +1,10 @@
 import tensorflow as tf
 import sys
+
 # from datasets import *
 import numpy as np
 import util
+
 # from models import *
 
 from pypocketminer.models.cpd_model import CPDModel

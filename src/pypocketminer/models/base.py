@@ -8,6 +8,7 @@ from tensorflow.keras import Model
 from pypocketminer.models.layers.mpnn_layer import MPNNLayer
 from pypocketminer.utils import gather_nodes, cat_neighbors_nodes, autoregressive_mask
 
+
 class Encoder(Model):
     def __init__(self, node_features, edge_features, num_layers=3, dropout=0.1):
         super(Encoder, self).__init__()

@@ -8,7 +8,7 @@ from glob import glob
 from tensorflow import keras as keras
 from tqdm import tqdm
 
-nn_path = "FIXME" # FIXME
+nn_path = "FIXME"  # FIXME
 
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "1"
 

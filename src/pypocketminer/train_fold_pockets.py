@@ -8,7 +8,12 @@ import numpy as np
 from datetime import datetime
 
 from pypocketminer.models.mqa_model import MQAModel
-from pypocketminer.datasets import determine_global_weights, pockets_dataset_fold, lookup, abbrev
+from pypocketminer.datasets import (
+    determine_global_weights,
+    pockets_dataset_fold,
+    lookup,
+    abbrev,
+)
 
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "1"
 

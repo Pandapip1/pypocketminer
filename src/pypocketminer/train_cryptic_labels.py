@@ -11,9 +11,18 @@ from glob import glob
 
 from pypocketminer.util import save_checkpoint, load_checkpoint
 from pypocketminer.models.mqa_model import MQAModel
-from pypocketminer.datasets import simulation_dataset, determine_global_weights, lookup, abbrev
+from pypocketminer.datasets import (
+    simulation_dataset,
+    determine_global_weights,
+    lookup,
+    abbrev,
+)
 
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "1"
+
+
+def get_weights(*args, **kargs):
+    raise NotImplementedError("I don't have the implementation for this")
 
 
 # utility method for splitting lists

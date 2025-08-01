@@ -5,6 +5,7 @@ from datetime import datetime
 
 from pypocketminer import util
 from pypocketminer.models.cpd_model import CPDModel
+from pypocketminer.datasets import cath_dataset
 
 # tf.debugging.enable_check_numerics()
 gpus = tf.config.experimental.list_physical_devices("GPU")
@@ -18,6 +19,7 @@ if gpus:
     except RuntimeError as e:
         # Memory growth must be set before GPUs have been initialized
         print(e)
+
 
 def make_model():
     model = CPDModel(

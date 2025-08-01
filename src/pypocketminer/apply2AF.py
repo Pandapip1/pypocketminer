@@ -88,7 +88,10 @@ def process_struc(strucs):
         seq = [r.name for r in prot_bb.top.residues]
         S[i, :n_residues] = np.asarray([lookup[abbrev[a]] for a in seq], dtype=np.int32)
         X[i] = np.pad(
-            xyz, [[0, L_max - n_residues], [0, 0], [0, 0]], "constant", constant_values=(np.nan,)
+            xyz,
+            [[0, L_max - n_residues], [0, 0], [0, 0]],
+            "constant",
+            constant_values=(np.nan,),
         )
 
     isnan = np.isnan(X)

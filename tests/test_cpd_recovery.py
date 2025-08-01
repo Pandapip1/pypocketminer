@@ -4,6 +4,7 @@ import sys
 import numpy as np
 import tqdm
 import util
+
 # from pypocketminer.models import *
 import tensorflow as tf
 

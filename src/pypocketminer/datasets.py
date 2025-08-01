@@ -251,10 +251,15 @@ def parse_batch(batch, use_tensors=True, y_type="int32", use_lm=False):
             S[i, :n_residues] = np.load(S_path)
         else:
             seq = [r.name for r in pdb.top.residues]
-            S[i, :n_residues] = np.asarray([lookup[abbrev[a]] for a in seq], dtype=np.int32)
+            S[i, :n_residues] = np.asarray(
+                [lookup[abbrev[a]] for a in seq], dtype=np.int32
+            )
 
         X[i] = np.pad(
-            xyz, [[0, n_residues_max - n_residues], [0, 0], [0, 0]], "constant", constant_values=(np.nan,)
+            xyz,
+            [[0, n_residues_max - n_residues], [0, 0], [0, 0]],
+            "constant",
+            constant_values=(np.nan,),
         )
         y[i, :n_residues] = targs
         meta.append(x)
