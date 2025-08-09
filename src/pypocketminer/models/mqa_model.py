@@ -1,6 +1,7 @@
 import tensorflow as tf
 
-from tensorflow.keras import Model, Sequential, register_keras_serializable
+from tensorflow.keras import Model, Sequential
+from tensorflow.keras.utils import register_keras_serializable
 from tensorflow.keras.layers import Dense, Embedding, Dropout, LayerNormalization
 
 from pypocketminer.models.base import Encoder
