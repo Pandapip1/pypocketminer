@@ -21,7 +21,6 @@ pocketminer_v1 = MQAModel(
     dropout=0.1
 )
 pocketminer_v1_ckpt = tf.train.Checkpoint(
-    optimizer=tf.keras.optimizers.Adam(),
     model=pocketminer_v1,
 )
 pocketminer_v1_status = pocketminer_v1_ckpt.restore(pocketminer_v1_path)
