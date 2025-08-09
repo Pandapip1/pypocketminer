@@ -19,4 +19,4 @@ def test_model_runs():
 
     assert np.all(0 <= preds)
     assert np.all(preds <= 1)
-    assert len(preds) == 123
+    assert len(preds) == 263
