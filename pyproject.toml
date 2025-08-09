@@ -9,6 +9,13 @@ dependencies = [
   "tensorflow"
 ]
 
+[project.optional-dependencies]
+dev = [
+  "black",
+  "ruff",
+  "pytest"
+]
+
 [build-system]
 requires = [ "setuptools" ]
 build-backend = "setuptools.build_meta"
