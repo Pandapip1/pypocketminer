@@ -1,5 +1,5 @@
-from pypocketminer.util import load_checkpoint
 from pypocketminer.models.mqa_model import MQAModel
+import tensorflow as tf
 import importlib.util
 import os
 
