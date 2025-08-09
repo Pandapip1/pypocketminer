@@ -1,4 +1,5 @@
 from pypocketminer.util import load_checkpoint
+from pypocketminer.models.mqa_model import MQAModel
 import importlib.util
 import os
 
