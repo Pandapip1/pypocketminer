@@ -9,7 +9,7 @@ def test_model_loads_checkpoint():
     pocketminer_v1_status.assert_consumed()
 
 def test_model_runs():
-    from pypocketminer.models.pretrained import pocketminer_v1_status
+    from pypocketminer.models.pretrained import pocketminer_v1 as model
 
     pdb = md.load(os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "1JWP.pdb"))
 
