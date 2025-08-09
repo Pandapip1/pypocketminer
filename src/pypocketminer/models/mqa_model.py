@@ -1,6 +1,6 @@
 import tensorflow as tf
 
-from tensorflow.keras import Model, Sequential
+from tensorflow.keras import Model, Sequential, register_keras_serializable
 from tensorflow.keras.layers import Dense, Embedding, Dropout, LayerNormalization
 
 from pypocketminer.models.base import Encoder
@@ -8,7 +8,7 @@ from pypocketminer.models.gvp import GVP
 from pypocketminer.models.features.structural import StructuralFeatures
 from pypocketminer.models.utils import vs_concat
 
-
+@register_keras_serializable(package="pypocketminer.models.mqa_model")
 class MQAModel(Model):
     def __init__(
         self,
