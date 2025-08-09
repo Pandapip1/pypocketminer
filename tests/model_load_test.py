@@ -27,7 +27,7 @@ def test_model_runs_1EXM():
 
     assert np.all(0 <= preds)
     assert np.all(preds <= 1)
-    assert len(preds) == 263
+    assert len(preds) == 403
 
 def test_model_runs_1NEP():
     pdb = md.load(os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "1NEP.pdb"))
@@ -38,4 +38,4 @@ def test_model_runs_1NEP():
 
     assert np.all(0 <= preds)
     assert np.all(preds <= 1)
-    assert len(preds) == 263
+    assert len(preds) == 130
