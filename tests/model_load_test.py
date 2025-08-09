@@ -1,8 +1,11 @@
 import os
 from pypocketminer.validate_performance_on_xtals import process_strucs
-from pypocketminer.models.pretrained import pocketminer_v1
+from pypocketminer.models.pretrained import pocketminer_v1, pocketminer_v1_status
 import mdtraj as md
 import numpy as np
+
+def test_model_loads_checkpoint():
+    pocketminer_v1_status.assert_consumed()
 
 def test_model_runs_1JWP():
     pdb = md.load(os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "1JWP.pdb"))
