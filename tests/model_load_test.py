@@ -15,9 +15,7 @@ def test_model_runs():
 
     X, S, mask = process_strucs([pdb])
 
-    preds = np.array(model(X, S, mask, train=False, res_level=True))
-
-    print(preds)
+    preds = np.array(model(X, S, mask, train=False, res_level=True))[0]
 
     assert np.all(0 <= preds)
     assert np.all(preds <= 1)
