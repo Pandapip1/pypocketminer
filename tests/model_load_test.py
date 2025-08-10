@@ -18,7 +18,7 @@ def test_model_runs_1JWP():
     assert len(preds) == 263
 
 def test_pretrained_model_serializes_deserializes_runs_1JWP():
-    with tempfile.TemporaryFile("w+") as temppkl:
+    with tempfile.TemporaryFile("wb+") as temppkl:
         pkl = pickle.dump(pocketminer_v1, temppkl)
         temppkl.flush()
         pocketminer_v1_restored = pickle.load(temppkl)
