@@ -21,6 +21,7 @@ def test_pretrained_model_serializes_deserializes_runs_1JWP():
     with tempfile.TemporaryFile("wb+") as temppkl:
         pkl = pickle.dump(pocketminer_v1, temppkl)
         temppkl.flush()
+        temppkl.seek(0)
         pocketminer_v1_restored = pickle.load(temppkl)
 
     pdb = md.load(os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "1JWP.pdb"))
