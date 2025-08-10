@@ -9,6 +9,8 @@ from pypocketminer.models.gvp import GVP
 from pypocketminer.models.features.structural import StructuralFeatures
 from pypocketminer.models.utils import vs_concat
 
+import os
+
 @register_keras_serializable(package="pypocketminer.models.mqa_model")
 class MQAModel(Model):
     def __init__(
@@ -26,6 +28,7 @@ class MQAModel(Model):
         ablate_rbf=False,
         use_lm=False,
         squeeze_lm=False,
+        pretrained_model_path=None,
     ):
 
         super(MQAModel, self).__init__()
@@ -38,10 +41,13 @@ class MQAModel(Model):
 
         # Hyperparameters
         self.nv, self.ns = node_features
-        self.hv, self.hs = hidden_dim
         self.ev, self.es = edge_features
+        self.hv, self.hs = hidden_dim
 
         # Featurization layers
+        self.k_neighbors = k_neighbors
+        self.ablate_sidechain_vectors = ablate_sidechain_vectors
+        self.ablate_rbf = ablate_rbf
         self.features = StructuralFeatures(
             node_features,
             edge_features,
@@ -61,12 +67,16 @@ class MQAModel(Model):
         self.W_v = GVP(vi=self.nv, vo=self.hv, so=self.hs, nls=None, nlv=None)
         self.W_e = GVP(vi=self.ev, vo=self.ev, so=self.hs, nls=None, nlv=None)
 
+        self.dropout = dropout
+        self.num_layers = num_layers
         self.encoder = Encoder(
             hidden_dim, edge_features, num_layers=num_layers, dropout=dropout
         )
 
         self.W_V_out = GVP(vi=self.hv, vo=0, so=self.hs, nls=None, nlv=None)
 
+        self.regression = regression
+        self.multiclass = multiclass
         if regression:
             self.dense = Sequential(
                 [
@@ -79,7 +89,6 @@ class MQAModel(Model):
                 ]
             )
         elif multiclass:
-            self.multiclass = True
             self.dense = Sequential(
                 [
                     Dense(2 * self.hs, activation="relu"),
@@ -101,6 +110,17 @@ class MQAModel(Model):
                     Dense(1, activation="sigmoid"),
                 ]
             )
+
+        if pretrained_model_path is not None:
+            self.pretrained_model_path = os.path.normpath(os.path.abspath(pretrained_model_path))
+            if not os.path.exists(self.pretrained_model_path):
+                raise ValueError(f"Pretrained model path does not exist: {self.pretrained_model_path}")
+
+            checkpoint = tf.train.Checkpoint(model=self)
+            checkpoint.restore(self.pretrained_model_path).assert_consumed()
+        else:
+            self.pretrained_model_path = None
+
 
     def call(self, X, S, mask, train=False, res_level=False, ablate_aa_type=False):
         # X [B, N, 4, 3], S [B, N], mask [B, N]
@@ -140,3 +160,34 @@ class MQAModel(Model):
             out = tf.squeeze(self.dense(out, training=train), -1)  # + 0.5 # [B, N]
 
         return out
+
+    def __getstate__(self):
+        """
+        Custom pickling function that saves the pretrained model path and all essential hyperparameters.
+        """
+
+        if self.pretrained_model_path is None:
+            raise ValueError("Non-pretrained MQAModel cannot be serialized")
+
+        return {
+            "node_features": (self.nv, self.ns),
+            "edge_features": (self.ev, self.es),
+            "hidden_dim": (self.hv, self.hs),
+            "num_layers": self.num_layers,
+            "dropout": self.dropout,
+            "regression": self.regression,
+            "multiclass": self.multiclass,
+            "ablate_aa_type": self.ablate_aa_type,
+            "ablate_sidechain_vectors": self.ablate_sidechain_vectors,
+            "ablate_rbf": self.ablate_rbf,
+            "use_lm": self.use_lm,
+            "squeeze_lm": self.squeeze_lm,
+            "pretrained_model_path": self.pretrained_model_path
+        }
+
+    def __setstate__(self, state):
+        """
+        Custom unpickling function that restores the pretrained model and hyperparameters.
+        """
+
+        self.__init__(**state)
