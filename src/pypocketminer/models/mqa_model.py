@@ -161,14 +161,7 @@ class MQAModel(Model):
 
         return out
 
-    def __getstate__(self):
-        """
-        Custom pickling function that saves the pretrained model path and all essential hyperparameters.
-        """
-
-        if self.pretrained_model_path is None:
-            raise ValueError("Non-pretrained MQAModel cannot be serialized")
-
+    def get_config(self):
         return {
             "node_features": (self.nv, self.ns),
             "edge_features": (self.ev, self.es),
@@ -184,10 +177,3 @@ class MQAModel(Model):
             "squeeze_lm": self.squeeze_lm,
             "pretrained_model_path": self.pretrained_model_path
         }
-
-    def __setstate__(self, state):
-        """
-        Custom unpickling function that restores the pretrained model and hyperparameters.
-        """
-
-        self.__init__(**state)
